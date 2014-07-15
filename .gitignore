@@ -8,3 +8,4 @@
 *.rkworkplace
 *.autosave
 *.*autosave
+tmp/
