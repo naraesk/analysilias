@@ -1,0 +1,10 @@
+*.xml
+*.csv
+*.RData
+*.html
+*.zip
+.directory
+*.ods
+*.rkworkplace
+*.autosave
+*.*autosave
