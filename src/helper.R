@@ -9,14 +9,12 @@ library(R2HTML)
 
 # Creae some data structures
 
-users <- data.frame(id=numeric(), Matrikel=numeric(), score=numeric(), mark=numeric(), stringsAsFactors = FALSE)
-questions <- data.frame(id=numeric(), solution=numeric(), title=character())
-exam <- list(mean=numeric(), maxScore=numeric(), minScore=numeric(), relScore=numeric(), rate=numeric(), title=character())
+users 		<- data.frame(id=numeric(), Matrikel=numeric(), score=numeric(), mark=numeric(), stringsAsFactors = FALSE)
+questions 	<- data.frame(id=numeric(), solution=numeric(), title=character())
+exam 		<- list(mean=numeric(), maxScore=numeric(), minScore=numeric(), relScore=numeric(), rate=numeric(), title=character())
 
 importFromIlias <- function ()
 {	
-# 	users <<- users[-0,]
-# 	questions <<- questions[-0,]
 	files <- list.files("input/", pattern="*.zip")
 	lapply(files, extractArchives)
 	dirs <- list.files("tmp/") 
