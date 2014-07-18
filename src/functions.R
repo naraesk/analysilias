@@ -109,15 +109,12 @@ printGraphs <- function ()
 
 analyse <- function(variant = "")
 {
-	score <<- score.multiple.choice(questions[["solution"]],users[5:ncol(users)], totals = TRUE, score=TRUE, short=FALSE, missing = FALSE)
+	score <<- score.multiple.choice(questions[["solution"]], users[5:ncol(users)], totals = TRUE, score = TRUE, short = FALSE, missing = FALSE)
 	users["score"] <<- score$scores
 
 	questions["Trennschärfe"] 			<<- score[["item.stats"]][["r"]]
 	questions["Schwierigkeitsindex"] 	<<- score[["item.stats"]][["mean"]]
-	questions["Distraktor 1"] 			<<- score[["item.stats"]][["0"]]
-	questions["Distraktor 2"] 			<<- score[["item.stats"]][["1"]]
-	questions["Distraktor 3"] 			<<- score[["item.stats"]][["2"]]
-	questions["Distraktor 4"] 			<<- score[["item.stats"]][["3"]]
+	lapply(c(0:exam[["numberOfAlternatives"]]), function (x) questions[[paste("Distractor", x)]] <<- score[["item.stats"]][[as.character(x)]])
 	questions["Standardabweichung"] 	<<- score[["item.stats"]][["sd"]]
   
 	print("Trennschärfe, Distraktorenanalyse und Schwierigkeitsindex wurden erfolgreich berechnet")
@@ -135,8 +132,8 @@ analyse <- function(variant = "")
 	{
 		exam[["minScore"]] <<- percentage[10] * exam[["maxScore"]]
 	}
-	marks["score"]     <<- as.numeric(lapply(marks$percentage, calcScores, variant=variant))
-	users["mark"]      <<- as.numeric(lapply(users$score, calcMarks))
+	marks["score"]     <<- sapply(marks$percentage, calcScores, variant=variant)
+	users["mark"]      <<- sapply(users$score, calcMarks)
 	exam[["mean"]]     <<- mean(users[["mark"]])
 	exam[["rate"]]     <<- length(users$mark[users[["mark"]] == 5]) / nrow(users)
 }

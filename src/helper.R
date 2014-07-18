@@ -12,14 +12,11 @@ library(R2HTML)
 users <- data.frame(id=numeric(), Matrikel=numeric(), score=numeric(), mark=numeric(), stringsAsFactors = FALSE)
 questions <- data.frame(id=numeric(), solution=numeric(), title=character())
 exam <- list(mean=numeric(), maxScore=numeric(), minScore=numeric(), relScore=numeric(), rate=numeric(), title=character())
-grades 	   <- c(1.0,  1.3,  1.7,  2.0,  2.3,  2.7,  3.0,  3.3,  3.7,  4.0)
-percentage <- c(0.87, 0.75, 0.67, 0.58, 0.50, 0.42, 0.33, 0.25, 0.12, 0)
-marks <- data.frame(grades, percentage)
 
 importFromIlias <- function ()
 {	
-	users <<- users[-0,]
-	questions <<- questions[-0,]
+# 	users <<- users[-0,]
+# 	questions <<- questions[-0,]
 	files <- list.files("input/", pattern="*.zip")
 	lapply(files, extractArchives)
 	dirs <- list.files("tmp/") 
@@ -28,60 +25,49 @@ importFromIlias <- function ()
   
 importData <- function (dir)
 {
-	qtiFileName 	 	<- gsub("tst", "qti", dir)
-	resultFileName 		<- gsub("tst", "results", dir)
-	qtiDoc 	 			<- xmlInternalTreeParse(paste("tmp/", dir, "/", qtiFileName, ".xml", sep=""))
-	resultDoc 	 		<- xmlInternalTreeParse(paste("tmp/", dir, "/", resultFileName, ".xml", sep=""))
+	qtiFileName 	<- gsub("tst", "qti", dir)
+	resultFileName 	<- gsub("tst", "results", dir)
+	qtiDoc 	 		<- xmlInternalTreeParse(paste("tmp/", dir, "/", qtiFileName, ".xml", sep=""))
+	resultDoc 	 	<- xmlInternalTreeParse(paste("tmp/", dir, "/", resultFileName, ".xml", sep=""))
 
 # Liest aus der result-Datei die Probanden ein
 
-	id   <- as.integer(xpathApply(resultDoc, "//tst_active/row[@active_id]", xmlGetAttr, "active_id"))
-	score     <- c(NA)
-	mark	  <- c(NA)
-	Matrikel <- c(NA)
-	users_new  <- data.frame (id, Matrikel, score, mark, stringsAsFactors = FALSE)
-	users_new  <- users_new[order(users_new$id),]
-	users <<- rbind(users, users_new)
+	id   			<- as.numeric(xpathSApply(resultDoc, "//tst_active/row[@active_id]", xmlGetAttr, "active_id"))
+	score     		<- c(NA)
+	mark	  		<- c(NA)
+	Matrikel 		<- c(NA)
+	users_new  		<- data.frame (id, Matrikel, score, mark, stringsAsFactors = FALSE)
+	users_new  		<- users_new[order(users_new$id),]
+	users 			<<- rbind(users, users_new)
 
 # Liest aus der qti-Datei alle relevanten Informationen zu den gestellten Fragen in den Frame questions ein
 
-	question_id_raw <- as.character(xpathApply(qtiDoc, "//item", xmlGetAttr, "ident"))
-	id 		  		<- as.integer(lapply(question_id_raw, function(x) str_sub(x, -4)))
-	solution_raw	<- xpathApply(qtiDoc,"//setvar[.='1']/../displayfeedback", xmlGetAttr, "linkrefid")
-	solution 		<- as.integer(lapply(solution_raw, function(x) str_sub(x, -1)))
-	title 	  		<- as.character(xpathApply(qtiDoc, "//item", xmlGetAttr, "title"))
+	question_id_raw <- xpathSApply(qtiDoc, "//item", xmlGetAttr, "ident")
+	id 		  		<- sapply(question_id_raw, function(x) as.numeric(str_sub(x, -4)))
+	solution_raw	<- xpathSApply(qtiDoc,"//setvar[.='1']/../displayfeedback", xmlGetAttr, "linkrefid")
+	solution 		<- sapply(solution_raw, function(x) as.numeric(str_sub(x, -1)))
+	title 	  		<- xpathSApply(qtiDoc, "//item", xmlGetAttr, "title")
+	comment_raw 	<- xpathSApply(qtiDoc, "//item/qticomment", xmlValue)
+	comment  		<- sapply(comment_raw, function(x) str_sub(x, -2))
 	
-	comment_raw 	<- as.character(xpathApply(qtiDoc, "//item/qticomment", xmlValue))
-	comment  		<- as.character(lapply(comment_raw, function(x) str_sub(x, -2)))
-	
-	
-# 	check if questions contains metadata 
+# 	get metadata from description
 #	pattern: "foliensatz, seitenzahl, type diff"
 #	example: "oogp_21_qt, 21 – 34, LF"
 
-	if (regexpr(".*,.*,.*", comment))
-	{
-		type		<- as.character(lapply(comment, function(string) getType(string)))
-		diff_tobe 	<- as.character(lapply(comment, function(string) getDifficulty(string)))
-	}
-	else
-	{
-		type 		<- ""
-		diff_tobe 	<- ""
-	}
+	type			<- sapply(comment, function(string) getType(string))
+	diff_tobe 		<- sapply(comment, function(string) getDifficulty(string))
   
-	opt0	  		<- as.character(xpathApply(qtiDoc, "//response_label[@ident=0]/material/mattext", xmlValue))
-	opt1	  		<- as.character(xpathApply(qtiDoc, "//response_label[@ident=1]/material/mattext", xmlValue))
-	opt2	  		<- as.character(xpathApply(qtiDoc, "//response_label[@ident=2]/material/mattext", xmlValue))
-	opt3	  		<- as.character(xpathApply(qtiDoc, "//response_label[@ident=3]/material/mattext", xmlValue))
+	count			<- xpathSApply(qtiDoc, "//response_label", xmlGetAttr, "ident")
+	exam["numberOfAlternatives"] <<- max(count)
+	
+	opts 			<- sapply(c(0:exam[["numberOfAlternatives"]]), function(x) xpathSApply(qtiDoc, paste("//response_label[@ident=",x,"]/material/mattext", sep=''), xmlValue))
+	optsWithTitle	<- data.frame(title, opts, stringsAsFactors = FALSE)
+	hash 			<- apply(optsWithTitle, 1, function(x) digest(x))
   
-	opts 			<- data.frame(title, opt0, opt1, opt2, opt3)
-	hash 			<- apply(opts, 1, function(x) print(digest(x)))
-  
-	questions_new   <- data.frame (id, solution, title, hash, type, stringsAsFactors = FALSE)
+	questions_new   <- data.frame (id, solution, title, hash, type, diff_tobe, stringsAsFactors = FALSE)
 	apply(questions_new["id"], 1, function (x) getResults(x, resultDoc=resultDoc))
 	questions 	    <<- rbind(questions, questions_new)
-	exam[["title"]] <<- as.character(xpathApply(qtiDoc, "//assessment", xmlGetAttr, "title"))
+	exam[["title"]] <<- xpathSApply(qtiDoc, "//assessment", xmlGetAttr, "title")
   
 	print("Daten wurden erfolgreich eingelesen")	
 }
@@ -112,13 +98,12 @@ extractArchives <- function (file)
 
 getResults <- function (id, resultDoc)
 {
-	string <- paste("//tst_solutions/row[@question_fi=", id, "]", sep="")
-	value1 <- as.integer(xpathApply(resultDoc, string, xmlGetAttr, "value1"))
-	active_fi<- as.integer(xpathApply(resultDoc, string, xmlGetAttr, "active_fi"))
-	list <- data.frame(value1, active_fi)
-	list <- list[order (list[["active_fi"]]),]
+	string 		<- paste("//tst_solutions/row[@question_fi=", id, "]", sep="")
+	value1 		<- as.numeric(xpathSApply(resultDoc, string, xmlGetAttr, "value1"))
+	active_fi	<- as.numeric(xpathSApply(resultDoc, string, xmlGetAttr, "active_fi"))
+	list 		<- data.frame(value1, active_fi)
+	list 		<- list[order (list[["active_fi"]]),]
 	users[as.character(id)] <<- list[["value1"]]
-	print(as.integer(xpathApply(resultDoc, string, xmlGetAttr, "value1")))
 }
 
 calcScores <- function (percentage, variant)
