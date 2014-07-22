@@ -9,6 +9,7 @@ import <- function(file)
 		path = paste("data/", file, ".RData", sep="")
 		load(file= path, envir=.GlobalEnv)
 	}
+	message("Daten wurden erfolgreich eingelesen")
 }
 
 addToPool <- function()
@@ -25,8 +26,8 @@ serialise <- function ()
 {
 	path <- paste("data/", exam[["title"]], ".RData", sep="")
 	save(users, questions, exam, file=path)
-	write.csv2(users[2:4], file=paste("output/Notenliste ", exam[["title"]], ".csv", sep=""),row.names=FALSE)
-	print("Notenliste wurde geschrieben.")
+	write.csv2(users[, c("Pruefungsnummer", "mark")], file=paste("output/Notenliste ", exam[["title"]], ".csv", sep=""),row.names=FALSE)
+	message("Notenliste wurde erfolgreich geschrieben.")
 }
 
 printGraphs <- function ()
@@ -109,7 +110,7 @@ printGraphs <- function ()
 
 analyse <- function(variant = "")
 {
-	score <<- score.multiple.choice(questions[["solution"]], users[5:ncol(users)], totals = TRUE, score = TRUE, short = FALSE, missing = FALSE)
+	score <<- score.multiple.choice(questions[["solution"]], users[8:ncol(users)], totals = TRUE, score = TRUE, short = FALSE, missing = FALSE)
 	users["score"] <<- score$scores
 
 	questions["Trennschärfe"] 			<<- score[["item.stats"]][["r"]]
@@ -117,7 +118,7 @@ analyse <- function(variant = "")
 	questions["Standardabweichung"] 	<<- score[["item.stats"]][["sd"]]
 	lapply(c(0:exam[["numberOfAlternatives"]]), function (x) questions[[paste("Distractor", x)]] <<- score[["item.stats"]][[as.character(x)]])
   
-	print("Trennschärfe, Distraktorenanalyse und Schwierigkeitsindex wurden erfolgreich berechnet")
+	message("Trennschärfe, Distraktorenanalyse und Schwierigkeitsindex wurden erfolgreich berechnet")
     
   # Notenberechnung 
   	exam[["maxScore"]] <<- nrow(questions)
@@ -136,4 +137,6 @@ analyse <- function(variant = "")
 	users["mark"]      <<- sapply(users$score, calcMarks)
 	exam[["mean"]]     <<- mean(users[["mark"]])
 	exam[["rate"]]     <<- length(users$mark[users[["mark"]] == 5]) / nrow(users)
+	
+	message("Noten wurden erfolgreich berechnet")
 }
