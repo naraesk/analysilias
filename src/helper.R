@@ -60,7 +60,7 @@ importFromIlias <- function ()
 	users[["Pruefungsnummer"]] 	<<- csvdata[["Pruefungsnummer"]]
 	
 	lapply(users[["Pruefungsnummer"]], validatePruefungsnummer)
-	rownames(users) <<- c(1:43)
+	rownames(users) <<- c(1:nrow(users))
 	
 	testframe <- data.frame(users["name"], users["score"], users[["duration"]])
 
