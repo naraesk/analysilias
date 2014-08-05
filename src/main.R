@@ -15,7 +15,6 @@ marks 	   <- data.frame(grades, percentage)
 # Variant 1: Import Data from ILIAS export file and related pool
 # Just download the export file of your exam from ILIAS and place the zip file into the input folder
 import()
-
 # load("data/Pool OOGP.RData")
 
 # Variant 2:: Import of an already converted exam

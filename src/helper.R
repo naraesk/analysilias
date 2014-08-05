@@ -48,10 +48,11 @@ importFromIlias <- function ()
 
 	csvfile 		<- list.files("input/", pattern="*.csv")[1]
 	csvpath			<- paste("input/", csvfile, sep="")
-	csv  			<- read.csv2(csvpath, header = TRUE, stringsAsFactors = FALSE, encoding = "latin1", col.names=c("name", "mail", "Matrikel", "Pruefungsnummer", "score", c(6:10), "duration", c(12:61)))
+	csv  			<<- read.csv2(csvpath, header = TRUE, stringsAsFactors = FALSE, encoding = "latin1")
+	colnames(csv)[1:11]	<- c("name", "mail", "Matrikel", "Pruefungsnummer", "score", c(6:10), "duration")
 	file.rename(csvpath, paste("backup/", csvfile, sep=""))
-	csvdata			<- data.frame(csv["name"], csv["Matrikel"], csv["Pruefungsnummer"], csv["score"], csv["duration"])
-	csvdata 		<- csvdata[order (csvdata[["name"]], csvdata[["duration"]], csvdata[["score"]]),]
+	csvdata			<<- data.frame(csv["name"], csv["Matrikel"], csv["Pruefungsnummer"], csv["score"], csv["duration"])
+	csvdata 		<<- csvdata[order (csvdata[["name"]], csvdata[["duration"]], csvdata[["score"]]),]
 	
 	users						<<- data.frame(tmp[["name"]], c(NA), c(NA), tmp[["score"]], mark, tmp["duration"], tmp["id"])
 	colnames(users)[1:4]		<<- c("name", "Matrikel", "Pruefungsnummer", "score")
@@ -74,7 +75,7 @@ importFromIlias <- function ()
 	|| !isTRUE(all.equal(users["name"], csvdata["name"])))
 	{
 		warning("The assignment of Matrikel and Pruefungsnummer might be wrong.")
-		return()
+# 		return()
 	}
 	
 # Reads information about questions from qti document
@@ -141,6 +142,7 @@ getResults <- function (id, resultsDoc)
 	value1 		<- as.numeric(xpathSApply(resultsDoc, string, xmlGetAttr, "value1"))
 	active_fi	<- as.numeric(xpathSApply(resultsDoc, string, xmlGetAttr, "active_fi"))
 	list 		<- data.frame(value1, active_fi)
+	users		<<- users[order (users[["id"]]),]
 	list 		<- list[order (list[["active_fi"]]),]
 	users[as.character(id)] <<- list[["value1"]]
 }

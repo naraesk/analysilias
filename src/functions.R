@@ -28,6 +28,9 @@ serialise <- function ()
 	save(users, questions, exam, file=path)
 	write.csv2(users[, c("Pruefungsnummer", "mark")], file=paste("output/Notenliste ", exam[["title"]], ".csv", sep=""),row.names=FALSE)
 	message("Notenliste wurde erfolgreich geschrieben.")
+	
+	write.csv2(marks[, c("grades", "score")], file=paste("output/", exam[["title"]], " - Notenschlüssel.csv", sep=""), row.names=FALSE)
+	message("Notenschlüssel wurde erfolgreich geschrieben")
 }
 
 printGraphs <- function ()
@@ -43,9 +46,10 @@ printGraphs <- function ()
   n$xAxis(axisLabel = "Schwierigkeitsindex")
   n$xAxis(tickValues = c(0, 0.33, 0.67, 1))
   n$yAxis(tickValues = c(-1, 0, 0.33, 0.67, 1))
-  n$save(paste("./output/", exam$title, " - Übersicht2.html", sep=""), cdn = T)
+  n$save(paste("./output/", exam$title, " - Übersicht.html", sep=""), cdn = T)
 
-#   Histogramm
+#   Histogramm Schwierigkeitsverteilung
+
   breaks <- c(0, 0.16666, 0.33333, 0.5, 0.66666, 0.83333, 1)
   questions[["Schwierigkeit"]] <- cut(questions[["Schwierigkeitsindex"]], breaks, c(1:6))
   hisdata <- data.frame(table(questions[["Schwierigkeit"]], questions[["type"]]))
@@ -54,6 +58,17 @@ printGraphs <- function ()
   his$chart(color = c('green', 'blue', 'red'))
   his$xAxis(axisLabel = "Schwierigkeitsindex")
   his$save(paste("./output/", exam$title, " - Histogramm.html", sep=""), cdn = T)   
+  
+#  Histogramm Notenverteilung
+
+  breaks <- c(1, 1.3, 1.7, 2, 2.3, 2.7, 3, 3.3, 3.7, 4, 5)
+  markdata<- data.frame(table(factor(users[["mark"]], levels=breaks)))
+  markdata$label <- c("1", "1.3", "1.7", "2", "2.3", "2.7", "3", "3.3", "3.7", "4", "5")
+  colnames(markdata)[2] <- c("Häufigkeit")
+  markgraph <<- nPlot(Häufigkeit ~ Var1, data=markdata, type="multiBarChart")
+  markgraph$chart(showControls = FALSE)
+  markgraph$chart(reduceXTicks = FALSE)
+  markgraph$save(paste("./output/", exam$title, " - Notenverteilung.html", sep=""), cdn = T) 
 
 #   Distraktorenanalyse
 #   q0 <- subset(questions, ! questions[["solution"]] == 0 )
@@ -111,7 +126,7 @@ printGraphs <- function ()
 analyse <- function(variant = "")
 {
 	score <<- score.multiple.choice(questions[["solution"]], users[8:ncol(users)], totals = TRUE, score = TRUE, short = FALSE, missing = FALSE)
-	users["score"] <<- score$scores
+# 	users["score"] <<- score$scores
 
 	questions["Trennschärfe"] 			<<- score[["item.stats"]][["r"]]
 	questions["Schwierigkeitsindex"] 	<<- score[["item.stats"]][["mean"]]
@@ -132,6 +147,7 @@ analyse <- function(variant = "")
 	else
 	{
 		exam[["minScore"]] <<- percentage[10] * exam[["maxScore"]]
+		print("falsch")
 	}
 	marks["score"]     <<- sapply(marks$percentage, calcScores, variant=variant)
 	users["mark"]      <<- sapply(users$score, calcMarks)
