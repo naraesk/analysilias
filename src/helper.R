@@ -21,7 +21,7 @@ importFromIlias <- function ()
 	zippath 		<- paste("input/", zipfile, sep="")
 	dir.create("tmp/", showWarnings = FALSE)
 	unzip(zippath, exdir="tmp/")
-# 	file.rename(zippath, paste("backup/", zipfile, sep=""))
+	file.rename(zippath, paste("backup/", zipfile, sep=""))
 	dir 			<- list.files("tmp/")[1] 
 
 	qtiFileName 	<- gsub("tst", "qti", dir)
@@ -51,7 +51,7 @@ importFromIlias <- function ()
 	csv  			<<- read.csv2(csvpath, header = TRUE, stringsAsFactors = FALSE, encoding = "latin1")
 	csv			<<- csv[csv$Name!="Name",]
 	colnames(csv)[1:11]	<- c("name", "mail", "Matrikel", "Pruefungsnummer", "score", c(6:10), "duration")
-# 	file.rename(csvpath, paste("backup/", csvfile, sep=""))
+	file.rename(csvpath, paste("backup/", csvfile, sep=""))
 	csvdata			<<- data.frame(csv["name"], csv["Matrikel"], csv["Pruefungsnummer"], csv["score"], csv["duration"])
 	csvdata 		<<- csvdata[order (csvdata[["name"]], csvdata[["duration"]], csvdata[["score"]]),]
 	
