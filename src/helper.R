@@ -21,27 +21,27 @@ importFromIlias <- function ()
 	zippath 		<- paste("input/", zipfile, sep="")
 	dir.create("tmp/", showWarnings = FALSE)
 	unzip(zippath, exdir="tmp/")
-	file.rename(zippath, paste("backup/", zipfile, sep=""))
+# 	file.rename(zippath, paste("backup/", zipfile, sep=""))
 	dir 			<- list.files("tmp/")[1] 
 
 	qtiFileName 	<- gsub("tst", "qti", dir)
 	resultsFileName <- gsub("tst", "results", dir)
-	qtiDoc 	 		<- xmlInternalTreeParse(paste("tmp/", dir, "/", qtiFileName, ".xml", sep=""))
-	resultsDoc 	 	<- xmlInternalTreeParse(paste("tmp/", dir, "/", resultsFileName, ".xml", sep=""))
+	qtiDoc 	 	<- xmlInternalTreeParse(paste("tmp/", dir, "/", qtiFileName, ".xml", sep=""))
+	resultsDoc 	<- xmlInternalTreeParse(paste("tmp/", dir, "/", resultsFileName, ".xml", sep=""))
 
 # Reads user info from the results file
 
-	id   			<- as.numeric(xpathSApply(resultsDoc, "//tst_active/row", xmlGetAttr, "active_id"))
-	name 			<- xpathSApply(resultsDoc, "//tst_active/row", xmlGetAttr, "fullname")
-	score     		<- as.numeric(xpathSApply(resultsDoc, "//tst_pass_result/row", xmlGetAttr, "points"))
+	id   		<- as.numeric(xpathSApply(resultsDoc, "//tst_active/row", xmlGetAttr, "active_id"))
+	name 		<- xpathSApply(resultsDoc, "//tst_active/row", xmlGetAttr, "fullname")
+	score     	<- as.numeric(xpathSApply(resultsDoc, "//tst_pass_result/row", xmlGetAttr, "points"))
 	duration_raw	<- as.numeric(xpathSApply(resultsDoc, "//tst_pass_result/row", xmlGetAttr, "workingtime"))
-	duration		<- sapply(duration_raw, secondsToHours)
-	tmp				<- data.frame(id, name)
-	tmp				<- tmp[order (tmp[["id"]]),]
+	duration	<- sapply(duration_raw, secondsToHours)
+	tmp		<- data.frame(id, name)
+	tmp		<- tmp[order (tmp[["id"]]),]
 	tmp["score"]	<- score
 	tmp["duration"] <- duration
-	tmp				<- tmp[order (tmp[["name"]]),]
-	mark	  		<- c(NA)
+	tmp		<- tmp[order (tmp[["name"]]),]
+	mark	  	<- c(NA)
 
 # Reads name, duration and scre from CSV
 # they are used to match the data from xml, because there is no unique ID that occurs in both documents
@@ -49,14 +49,15 @@ importFromIlias <- function ()
 	csvfile 		<- list.files("input/", pattern="*.csv")[1]
 	csvpath			<- paste("input/", csvfile, sep="")
 	csv  			<<- read.csv2(csvpath, header = TRUE, stringsAsFactors = FALSE, encoding = "latin1")
+	csv			<<- csv[csv$Name!="Name",]
 	colnames(csv)[1:11]	<- c("name", "mail", "Matrikel", "Pruefungsnummer", "score", c(6:10), "duration")
-	file.rename(csvpath, paste("backup/", csvfile, sep=""))
+# 	file.rename(csvpath, paste("backup/", csvfile, sep=""))
 	csvdata			<<- data.frame(csv["name"], csv["Matrikel"], csv["Pruefungsnummer"], csv["score"], csv["duration"])
 	csvdata 		<<- csvdata[order (csvdata[["name"]], csvdata[["duration"]], csvdata[["score"]]),]
 	
-	users						<<- data.frame(tmp[["name"]], c(NA), c(NA), tmp[["score"]], mark, tmp["duration"], tmp["id"])
+	users				<<- data.frame(tmp[["name"]], c(NA), c(NA), tmp[["score"]], mark, tmp["duration"], tmp["id"])
 	colnames(users)[1:4]		<<- c("name", "Matrikel", "Pruefungsnummer", "score")
-	users						<<- users[order (users[["name"]], users[["duration"]], users[["score"]]),]
+	users				<<- users[order (users[["name"]], users[["duration"]], users[["score"]]),]
 	users[["Matrikel"]] 		<<- csvdata[["Matrikel"]]
 	users[["Pruefungsnummer"]] 	<<- csvdata[["Pruefungsnummer"]]
 	
