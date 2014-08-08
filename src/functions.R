@@ -46,7 +46,7 @@ printGraphs <- function ()
   n$xAxis(axisLabel = "Schwierigkeitsindex")
   n$xAxis(tickValues = c(0, 0.33, 0.67, 1))
   n$yAxis(tickValues = c(-1, 0, 0.33, 0.67, 1))
-  n$save(paste("./output/", exam$title, " - Übersicht.html", sep=""), cdn = T)
+  n$save(paste("./output/", exam$title, " - Übersicht.html", sep=""), standalone = TRUE)
 
 #   Histogramm Schwierigkeitsverteilung
 
@@ -57,7 +57,7 @@ printGraphs <- function ()
   his <- nPlot(Freq ~ label, group="Var2", data=hisdata, type="multiBarChart")
   his$chart(color = c('green', 'blue', 'red'))
   his$xAxis(axisLabel = "Schwierigkeitsindex")
-  his$save(paste("./output/", exam$title, " - Histogramm.html", sep=""), cdn = T)   
+  his$save(paste("./output/", exam$title, " - Histogramm.html", sep=""), standalone = TRUE)   
   
 #  Histogramm Notenverteilung
 
@@ -68,7 +68,7 @@ printGraphs <- function ()
   markgraph <<- nPlot(Häufigkeit ~ Var1, data=markdata, type="multiBarChart")
   markgraph$chart(showControls = FALSE)
   markgraph$chart(reduceXTicks = FALSE)
-  markgraph$save(paste("./output/", exam$title, " - Notenverteilung.html", sep=""), cdn = T) 
+  markgraph$save(paste("./output/", exam$title, " - Notenverteilung.html", sep=""), standalone = TRUE) 
 
 #   Distraktorenanalyse
 #   q0 <- subset(questions, ! questions[["solution"]] == 0 )
@@ -123,6 +123,8 @@ printGraphs <- function ()
 #   d1$save(paste("./output/", exam$title, " - Distraktorenanalyse.html", sep=""), cdn = T)
 }
 
+print(mean(users[["score"]]))
+
 analyse <- function(variant = "")
 {
 	score <<- score.multiple.choice(questions[["solution"]], users[8:ncol(users)], totals = TRUE, score = TRUE, short = FALSE, missing = FALSE)
@@ -142,6 +144,7 @@ analyse <- function(variant = "")
 		percentage <- c(0.87, 0.75, 0.67, 0.58, 0.50, 0.42, 0.33, 0.25, 0.12, 0)
 		marks <<- data.frame(grades, percentage)
 		exam[["minScore"]] <<- mean(users$score) * 0.78
+		if (exam[["minScore"]] > nrow(questions) * 0.5) exam[["minScore"]] <<- 20
 		exam[["relScore"]] <<- exam[["maxScore"]] - exam[["minScore"]]
 	}
 	else
