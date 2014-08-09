@@ -1,3 +1,20 @@
+# Copyright 2014 David Baum <david.baum@uni-leipzig.de>
+# 
+# This file is part of ilias-analysis.
+# 
+# ilias-analysis is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# ilias-analysis is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with ilias-analysis.  If not, see <http://www.gnu.org/licenses/>.
+
 source("src/ilias.R")
 
 grades 	   <- c(1.0,  1.3,  1.7,  2.0,  2.3,  2.7,  3.0,  3.3,  3.7,  4.0)
