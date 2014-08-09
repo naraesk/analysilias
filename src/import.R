@@ -1,18 +1,16 @@
-library(psych)
-library(stringr)
-library(R.utils)
-library(XML)
-library(rCharts)
-library(digest)
-library(plyr)
-
-options(stringsAsFactors = FALSE)
-
-# Creae some data structures
-
-users 		<- data.frame(id=numeric(), Matrikel=numeric(), score=numeric(), mark=numeric(), stringsAsFactors = FALSE)
-questions 	<- data.frame(id=numeric(), solution=numeric(), title=character())
-exam 		<- list(mean=numeric(), maxScore=numeric(), minScore=numeric(), relScore=numeric(), rate=numeric(), title=character())
+import <- function(file)
+{
+	if(missing(file))
+	{
+		importFromIlias()
+	}
+	else
+	{
+		path = paste("data/", file, ".RData", sep="")
+		load(file= path, envir=.GlobalEnv)
+	}
+	message("Daten wurden erfolgreich eingelesen")
+}
 
 importFromIlias <- function ()
 {
@@ -148,6 +146,7 @@ getResults <- function (id, resultsDoc)
 	users[as.character(id)] <<- list[["value1"]]
 }
 
+
 validatePruefungsnummer <- function (x)
 {
 	if(is.na(x)) {
@@ -156,86 +155,4 @@ validatePruefungsnummer <- function (x)
 	}
 	if( x>99999) warning("Pruefungsnummer with 6 digits")
 	if( x<10000) warning("Pruefungsnummer with 4 digits")
-}
-
-calcScores <- function (percentage, variant)
-{
-	if(variant == "22%") return (round(percentage * exam[["relScore"]] + exam[["minScore"]]))
-	return (round(percentage * exam[["maxScore"]]))
-}
-
-calcMarks <- function (score)
-{
-	if(score < exam[["minScore"]]) return (5)
-	return (min(marks$grades[marks$score<=score]))
-}
-
-addQuestionToPool <- function (x)
-{
-	rowPool <<- as.integer(rownames(subset(pool, id==x)))
-	rowQuestions <<- as.integer(rownames(subset(questions, hash==x)))
-   
-	if(!is.integer(rowPool)) { return(NULL) }
-
-	if(questions[["Schwierigkeitsindex"]][rowQuestions] > 0.67)
-	{
-		pool[["diff_easy"]][rowPool] <<- pool[["diff_easy"]][rowPool] +1
-	}
-	else if(questions[["Schwierigkeitsindex"]][rowQuestions] <= 1/3)
-	{
-		pool[["diff_hard"]][rowPool] <<- pool[["diff_hard"]][rowPool] +1
-	}
-	else pool[["diff_med"]][rowPool] <<- pool[["diff_med"]][rowPool] +1
-  
-	if(length(questions[["Trennschärfe"]][rowQuestions]) == 0) {return(NULL)}
-  
-	if(is.na(questions[["Trennschärfe"]][rowQuestions])) { return(NULL)} 
-  
-	if(questions[["Trennschärfe"]][rowQuestions] > 0.3)
-	{
-		pool[["ITC_high"]][rowPool] <<- pool[["ITC_high"]][rowPool] +1
-	}
-	else if (questions[["Trennschärfe"]][rowQuestions] <= 0)
-	{
-		pool[["ITC_neg"]][rowPool] <<- pool[["ITC_neg"]][rowPool] +1
-	}
-	else pool[["ITC_low"]][rowPool] <<- pool[["ITC_low"]][rowPool] +1
-}
-
-removeQuestionFromPool <- function(x)
-{
-	rowPool <- as.integer(rownames(subset(pool, id==x)))
-	rowQuestions <- as.integer(rownames(subset(questions, hash==x)))
-   
-	if(!is.integer(rowPool)) { return(NULL) }
-
-	if(questions[["Schwierigkeitsindex"]][rowQuestions] > 0.67)
-	{
-		pool[["diff_easy"]][rowPool] <<- pool[["diff_easy"]][rowPool] -1
-	}
-	else if(questions[["Schwierigkeitsindex"]][rowQuestions] <= 1/3)
-	{
-		pool[["diff_hard"]][rowPool] <<- pool[["diff_hard"]][rowPool] -1
-	}
-	else pool[["diff_med"]][rowPool] <<- pool[["diff_med"]][rowPool] -1
-  
-	if(length(questions[["Trennschärfe"]][rowQuestions]) == 0) {return(NULL)}
-  
-	if(is.na(questions[["Trennschärfe"]][rowQuestions])) { return(NULL)} 
-  
-	if(questions[["Trennschärfe"]][rowQuestions] > 0.3)
-	{
-		pool[["ITC_high"]][rowPool] <<- pool[["ITC_high"]][rowPool] -1
-	}
-	else if (questions[["Trennschärfe"]][rowQuestions] <= 0)
-	{
-		pool[["ITC_neg"]][rowPool] <<- pool[["ITC_neg"]][rowPool] -1
-	}
-	else pool[["ITC_low"]][rowPool] <<- pool[["ITC_low"]][rowPool] -1
-}
-
-cleanup <- function()
-{
-  rm(grades, percentage, marks, score, envir = .GlobalEnv)
-  unlink("tmp/", recursive=TRUE)
 }
