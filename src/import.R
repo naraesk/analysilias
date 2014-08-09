@@ -26,18 +26,18 @@ import <- function(file)
 		path = paste("data/", file, ".RData", sep="")
 		load(file= path, envir=.GlobalEnv)
 	}
-	message("Daten wurden erfolgreich eingelesen")
 }
 
 importFromIlias <- function ()
 {
 
-	zipfile			<- list.files("input/", pattern="*.zip")[1]
-	zippath 		<- paste("input/", zipfile, sep="")
+	zipfile		<- list.files("input/", pattern="*.zip")[1]
+	zippath 	<- paste("input/", zipfile, sep="")
 	dir.create("tmp/", showWarnings = FALSE)
+	
 	unzip(zippath, exdir="tmp/")
 	file.rename(zippath, paste("backup/", zipfile, sep=""))
-	dir 			<- list.files("tmp/")[1] 
+	dir 		<- list.files("tmp/")[1] 
 
 	qtiFileName 	<- gsub("tst", "qti", dir)
 	resultsFileName <- gsub("tst", "results", dir)
@@ -97,12 +97,12 @@ importFromIlias <- function ()
 # Reads information about questions from qti document
 
 	question_id_raw <- xpathSApply(qtiDoc, "//item", xmlGetAttr, "ident")
-	id 		  		<- sapply(question_id_raw, function(x) as.numeric(str_sub(x, -4)))
+	id 		<- sapply(question_id_raw, function(x) as.numeric(str_sub(x, -4)))
 	solution_raw	<- xpathSApply(qtiDoc,"//setvar[.='1']/../displayfeedback", xmlGetAttr, "linkrefid")
-	solution 		<- sapply(solution_raw, function(x) as.numeric(str_sub(x, -1)))
-	title 	  		<- xpathSApply(qtiDoc, "//item", xmlGetAttr, "title")
+	solution 	<- sapply(solution_raw, function(x) as.numeric(str_sub(x, -1)))
+	title 	  	<- xpathSApply(qtiDoc, "//item", xmlGetAttr, "title")
 	comment_raw 	<- xpathSApply(qtiDoc, "//item/qticomment", xmlValue)
-	comment  		<- sapply(comment_raw, function(x) str_sub(x, -2))
+	comment  	<- sapply(comment_raw, function(x) str_sub(x, -2))
 	
 # 	get metadata from description
 #	pattern: "foliensatz, seitenzahl, type diff"
@@ -115,13 +115,15 @@ importFromIlias <- function ()
 	exam["numberOfAlternatives"] <<- max(count)
 	
 	opts 			<- sapply(c(0:exam[["numberOfAlternatives"]]), function(x) xpathSApply(qtiDoc, paste("//response_label[@ident=",x,"]/material/mattext", sep=''), xmlValue))
-	optsWithTitle	<- data.frame(title, opts)
+	optsWithTitle		<- data.frame(title, opts)
 	hash 			<- apply(optsWithTitle, 1, function(x) digest(x))
   
-	questions_new   <- data.frame (id, solution, title, hash, type, diff_tobe)
+	questions_new  		<- data.frame (id, solution, title, hash, type, diff_tobe)
 	apply(questions_new["id"], 1, function (x) getResults(x, resultsDoc=resultsDoc))
-	questions 	    <<- rbind(questions, questions_new)
-	exam[["title"]] <<- xpathSApply(qtiDoc, "//assessment", xmlGetAttr, "title")
+	questions 	   	<<- rbind(questions, questions_new)
+	exam[["title"]] 	<<- xpathSApply(qtiDoc, "//assessment", xmlGetAttr, "title")
+	exam[["outputPath"]]	<<- paste("./output/", exam[["title"]], "/", sep="")
+	dir.create(exam[["outputPath"]], showWarnings = FALSE)
 }
 
 getType <- function(string)
@@ -142,7 +144,7 @@ getDifficulty <- function (string)
 
 secondsToHours <- function (sec)
 {
-	h 	<- sec %/% 3600
+	h <- sec %/% 3600
 	min <- (sec-(h*3600)) %/% 60
 	sec <- sec - (h*3600) - (min*60)
 	
@@ -162,7 +164,6 @@ getResults <- function (id, resultsDoc)
 	list 		<- list[order (list[["active_fi"]]),]
 	users[as.character(id)] <<- list[["value1"]]
 }
-
 
 validatePruefungsnummer <- function (x)
 {

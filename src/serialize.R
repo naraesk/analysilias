@@ -26,12 +26,10 @@ serialize <- function ()
 
 generateListOfGrades <- function ()
 {
-	write.csv2(users[, c("Pruefungsnummer", "mark")], file=paste("output/Notenliste ", exam[["title"]], ".csv", sep=""),row.names=FALSE)
-	message("list of grades was written successfully")
+	write.csv2(users[, c("Pruefungsnummer", "mark")], file=paste(exam[["outputPath"]], "List of Grades", ".csv", sep=""),row.names=FALSE)
 }
 
 generateGradingSchema <- function()
 {
-	write.csv2(marks[, c("grades", "score")], file=paste("output/", exam[["title"]], " - Notenschlüssel.csv", sep=""), row.names=FALSE)
-	message("Notenschlüssel wurde erfolgreich geschrieben")
+	write.csv2(marks[, c("grades", "score")], file=paste(exam[["outputPath"]], "Grading Schema.csv", sep=""), row.names=FALSE)
 }
