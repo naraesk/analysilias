@@ -15,15 +15,15 @@
 # You should have received a copy of the GNU General Public License
 # along with ilias-analysis.  If not, see <http://www.gnu.org/licenses/>.
 
-generateGraphs <- function ()
-{
+generateGraphs <- function () {
 	generateITCGraph()
 	generateDistributonOfDifficulty()
 	generateDistributionOfGrades()
+	
+	message("Graphs have been drawn successfully.")
 }
 
-generateITCGraph <- function ()
-{
+generateITCGraph <- function () {
 	graph <- nPlot(Trennschärfe ~ Schwierigkeitsindex, group="type", data=questions, type="scatterChart")
 	graph$chart(tooltipContent = "#! function(key, x, y, e) {return e.point.title} !#")
 	graph$chart(forceY = c(-1, 1))
@@ -36,8 +36,7 @@ generateITCGraph <- function ()
 	graph$save(paste(exam[["outputPath"]], "Overview.html", sep=""), standalone = TRUE)
 }
 
-generateDistributonOfDifficulty <- function ()
-{
+generateDistributonOfDifficulty <- function () {
 	breaks <- c(0, 0.16666, 0.33333, 0.5, 0.66666, 0.83333, 1)
 	questions[["Schwierigkeit"]] <- cut(questions[["Schwierigkeitsindex"]], breaks, c(1:6))
 	graphdata <- data.frame(table(questions[["Schwierigkeit"]], questions[["type"]]))
@@ -48,18 +47,16 @@ generateDistributonOfDifficulty <- function ()
 	graph$save(paste(exam[["outputPath"]], "Distribution of Difficulty.html", sep=""), standalone = TRUE)
 }
 
-generateDistributionOfGrades <- function ()
-{
+generateDistributionOfGrades <- function () {
 	breaks <- c(1, 1.3, 1.7, 2, 2.3, 2.7, 3, 3.3, 3.7, 4, 5)
-	graphdata<- data.frame(table(factor(users[["mark"]], levels=breaks)))
+	graphdata <- data.frame(table(factor(users[["mark"]], levels=breaks)))
 	graphdata$label <- c("1", "1.3", "1.7", "2", "2.3", "2.7", "3", "3.3", "3.7", "4", "5")
 	colnames(graphdata)[2] <- c("Frequency")
-	graph <<- nPlot(Frequency ~ Var1, data=graphdata, type="multiBarChart")
+	graph <- nPlot(Frequency ~ Var1, data=graphdata, type="multiBarChart")
 	graph$chart(showControls = FALSE)
 	graph$chart(reduceXTicks = FALSE)
 	graph$save(paste(exam[["outputPath"]], "Distribution of Grades.html", sep=""), standalone = TRUE)
 }
-
 
 #   Distraktorenanalyse
 #   q0 <- subset(questions, ! questions[["solution"]] == 0 )

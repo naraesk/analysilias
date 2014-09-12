@@ -34,13 +34,13 @@ addQuestionToPool <- function (x)
 
 	if(questions[["Schwierigkeitsindex"]][rowQuestions] > 0.67)
 	{
-		pool[["diff_easy"]][rowPool] <<- pool[["diff_easy"]][rowPool] +1
+		pool[["diff_easy"]][rowPool] <<- pool[["diff_easy"]][rowPool] + 1
 	}
 	else if(questions[["Schwierigkeitsindex"]][rowQuestions] <= 1/3)
 	{
-		pool[["diff_hard"]][rowPool] <<- pool[["diff_hard"]][rowPool] +1
+		pool[["diff_hard"]][rowPool] <<- pool[["diff_hard"]][rowPool] + 1
 	}
-	else pool[["diff_med"]][rowPool] <<- pool[["diff_med"]][rowPool] +1
+	else pool[["diff_med"]][rowPool] <<- pool[["diff_med"]][rowPool] + 1
   
 	if(length(questions[["Trennschärfe"]][rowQuestions]) == 0) {return(NULL)}
   
@@ -48,13 +48,13 @@ addQuestionToPool <- function (x)
   
 	if(questions[["Trennschärfe"]][rowQuestions] > 0.3)
 	{
-		pool[["ITC_high"]][rowPool] <<- pool[["ITC_high"]][rowPool] +1
+		pool[["ITC_high"]][rowPool] <<- pool[["ITC_high"]][rowPool] + 1
 	}
 	else if (questions[["Trennschärfe"]][rowQuestions] <= 0)
 	{
-		pool[["ITC_neg"]][rowPool] <<- pool[["ITC_neg"]][rowPool] +1
+		pool[["ITC_neg"]][rowPool] <<- pool[["ITC_neg"]][rowPool] + 1
 	}
-	else pool[["ITC_low"]][rowPool] <<- pool[["ITC_low"]][rowPool] +1
+	else pool[["ITC_low"]][rowPool] <<- pool[["ITC_low"]][rowPool] + 1
 }
 
 removeQuestionFromPool <- function(x)
@@ -66,13 +66,13 @@ removeQuestionFromPool <- function(x)
 
 	if(questions[["Schwierigkeitsindex"]][rowQuestions] > 0.67)
 	{
-		pool[["diff_easy"]][rowPool] <<- pool[["diff_easy"]][rowPool] -1
+		pool[["diff_easy"]][rowPool] <<- pool[["diff_easy"]][rowPool] - 1
 	}
 	else if(questions[["Schwierigkeitsindex"]][rowQuestions] <= 1/3)
 	{
-		pool[["diff_hard"]][rowPool] <<- pool[["diff_hard"]][rowPool] -1
+		pool[["diff_hard"]][rowPool] <<- pool[["diff_hard"]][rowPool] - 1
 	}
-	else pool[["diff_med"]][rowPool] <<- pool[["diff_med"]][rowPool] -1
+	else pool[["diff_med"]][rowPool] <<- pool[["diff_med"]][rowPool] - 1
   
 	if(length(questions[["Trennschärfe"]][rowQuestions]) == 0) {return(NULL)}
   
@@ -80,11 +80,11 @@ removeQuestionFromPool <- function(x)
   
 	if(questions[["Trennschärfe"]][rowQuestions] > 0.3)
 	{
-		pool[["ITC_high"]][rowPool] <<- pool[["ITC_high"]][rowPool] -1
+		pool[["ITC_high"]][rowPool] <<- pool[["ITC_high"]][rowPool] - 1
 	}
 	else if (questions[["Trennschärfe"]][rowQuestions] <= 0)
 	{
-		pool[["ITC_neg"]][rowPool] <<- pool[["ITC_neg"]][rowPool] -1
+		pool[["ITC_neg"]][rowPool] <<- pool[["ITC_neg"]][rowPool] - 1
 	}
-	else pool[["ITC_low"]][rowPool] <<- pool[["ITC_low"]][rowPool] -1
+	else pool[["ITC_low"]][rowPool] <<- pool[["ITC_low"]][rowPool] - 1
 }

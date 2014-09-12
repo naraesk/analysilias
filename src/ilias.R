@@ -35,11 +35,15 @@ options(stringsAsFactors = FALSE)
 # Creae some data structures
 
 users 		<- data.frame(id=numeric(), Matrikel=numeric(), score=numeric(), mark=numeric(), stringsAsFactors = FALSE)
+answers		<- data.frame(id=numeric())
+points		<- data.frame(id=numeric())
 questions 	<- data.frame(id=numeric(), solution=numeric(), title=character())
 exam 		<- list(mean=numeric(), maxScore=numeric(), minScore=numeric(), relScore=numeric(), rate=numeric(), title=character())
+marks 	   <- data.frame(grades, percentage)
+alternatives	<- vector()
+solutions	<- vector()
 
-cleanup <- function()
-{
-  rm(grades, percentage, marks, score, envir = .GlobalEnv)
-  unlink("tmp/", recursive=TRUE)
+cleanup <- function() {
+  rm(grades, percentage, marks, alternatives, envir = .GlobalEnv)
+  unlink("tmp", recursive=TRUE)
 }

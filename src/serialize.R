@@ -15,21 +15,15 @@
 # You should have received a copy of the GNU General Public License
 # along with ilias-analysis.  If not, see <http://www.gnu.org/licenses/>.
 
-serialize <- function ()
-{
+serialize <- function () {
 	path <- paste("data/", exam[["title"]], ".RData", sep="")
 	save(users, questions, exam, file=path)
 	
-	generateGradingSchema()
-	generateListOfGrades()
-}
+# 	generate list of grades
+	write.csv(users[, c("Pruefungsnummer", "mark")], file=paste(exam[["outputPath"]], "List of Grades", ".csv", sep=""),row.names=FALSE)
 
-generateListOfGrades <- function ()
-{
-	write.csv2(users[, c("Pruefungsnummer", "mark")], file=paste(exam[["outputPath"]], "List of Grades", ".csv", sep=""),row.names=FALSE)
-}
-
-generateGradingSchema <- function()
-{
-	write.csv2(marks[, c("grades", "score")], file=paste(exam[["outputPath"]], "Grading Schema.csv", sep=""), row.names=FALSE)
+# 	generate grading schema
+	write.csv(marks[, c("grades", "score")], file=paste(exam[["outputPath"]], "Grading Schema.csv", sep=""), row.names=FALSE)
+	
+	message("List of grades and grading schema have been written successfully.")
 }

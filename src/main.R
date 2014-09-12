@@ -15,11 +15,10 @@
 # You should have received a copy of the GNU General Public License
 # along with ilias-analysis.  If not, see <http://www.gnu.org/licenses/>.
 
-source("src/ilias.R")
-
 grades 	   <- c(1.0,  1.3,  1.7,  2.0,  2.3,  2.7,  3.0,  3.3,  3.7,  4.0)
 percentage <- c(0.87, 0.75, 0.67, 0.58, 0.50, 0.42, 0.33, 0.25, 0.12, 0)
-marks 	   <- data.frame(grades, percentage)
+
+source("src/ilias.R")
 
 # There exist two ways for import data (see below)
 # In both cases, three objects are created:
@@ -30,15 +29,20 @@ marks 	   <- data.frame(grades, percentage)
 
 # Variant 1: Import Data from ILIAS export file and related pool
 # Just download the export file of your exam from ILIAS and place the zip file into the input folder
-import()
 # load("data/Pool OOGP.RData")
 
+import()
 # Variant 2:: Import of an already converted exam
+# loads the appropriate RData object from the data subdir
 # import("SP WS 1213")
 
-# calculate some metrics (ITC, difficulty of item, distractor analysis) and marks
-# TODO: calculation of marks has to be more flexible
-analyse("22%")
+# calculate some metrics (ITC, difficulty of item, distractor analysis)
+analyze()
+
+# calculates the grade schema as well es the grades
+# if you pass "22%" as an option, the "22% rule" of uni leipzig will be applied.
+
+calcGrades("22%")
 
 # create some diagrams into output folder
 # Scatter plot (x: difficulty, y: ITC)
@@ -50,7 +54,7 @@ generateGraphs()
 # The serialize function does several things:
 # – save the relevant objects as RData into the data folder
 # — create csv file with user id and mark
-# TODO: print csv with overview of marks and points
+# – create wsv file with grading schema
 
 serialize()
 

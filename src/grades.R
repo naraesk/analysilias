@@ -15,19 +15,16 @@
 # You should have received a copy of the GNU General Public License
 # along with ilias-analysis.  If not, see <http://www.gnu.org/licenses/>.
 
-calcGrades <- function (percentage, variant)
-{
+calcGrades <- function (variant) {
   	exam[["maxScore"]] <<- nrow(questions)
-  	if (variant == "22%")
-  	{
+  	if (variant == "22%") {
 		percentage <- c(0.87, 0.75, 0.67, 0.58, 0.50, 0.42, 0.33, 0.25, 0.12, 0)
 		marks <<- data.frame(grades, percentage)
-		exam[["minScore"]] <<- mean(users$score) * 0.78
-		if (exam[["minScore"]] > nrow(questions) * 0.5) exam[["minScore"]] <<- 20
+		exam[["minScore"]] <<- 0.78 * mean(users$score)
+# TODO: this only works when every questions has the same weight
+		if (exam[["minScore"]] > 0.5 * nrow(questions)) exam[["minScore"]] <<- 0.5 * nrow(questions)
 		exam[["relScore"]] <<- exam[["maxScore"]] - exam[["minScore"]]
-	}
-	else
-	{
+	} else 	{
 		exam[["minScore"]] <<- percentage[10] * exam[["maxScore"]]
 		print("falsch")
 	}
@@ -36,17 +33,15 @@ calcGrades <- function (percentage, variant)
 	exam[["mean"]]     <<- mean(users[["mark"]])
 	exam[["rate"]]     <<- length(users$mark[users[["mark"]] == 5]) / nrow(users)
 	
-	message("Noten wurden erfolgreich berechnet")
+	message("Grades have been calculated successfully.")
 }
 
-calcScores <- function (percentage, variant)
-{
+calcScores <- function (percentage, variant) {
 	if(variant == "22%") return (round(percentage * exam[["relScore"]] + exam[["minScore"]]))
 	return (round(percentage * exam[["maxScore"]]))
 }
 
-findGrade <- function (score)
-{
+findGrade <- function (score) {
 	if(score < exam[["minScore"]]) return (5)
 	return (min(marks$grades[marks$score<=score]))
 }
