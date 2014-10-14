@@ -20,12 +20,13 @@ analyze <- function() {
 	binPoints <- points
 	binPoints[binPoints > 1] <- 1
 	
-	score <- score.multiple.choice(as.vector(rep(1,ncol(binPoints) -1)), binPoints[2:ncol(binPoints)], totals = TRUE, score = TRUE, short = FALSE, missing = FALSE)
+	score <<- score.multiple.choice(as.vector(rep(1,ncol(binPoints) -1)), binPoints[2:ncol(binPoints)], totals = TRUE, score = TRUE, short = FALSE, missing = FALSE)
 	
 	questions["Trennschärfe"] 		<<- score[["item.stats"]][["r"]]
 	questions["Schwierigkeitsindex"] 	<<- score[["item.stats"]][["mean"]]
 	questions["Standardabweichung"] 	<<- score[["item.stats"]][["sd"]]
 	
-	lapply(c(0:max(questions["numberOfAlternatives"])), function (x) questions[[paste("Distractor", x)]] <<- score[["item.stats"]][[as.character(x)]])
+# 	lapply(c(0:max(questions["numberOfAlternatives"])), function (x) questions[[paste("Distractor", x)]] <<- score[["item.stats"]][[as.character(x)]])
+
 	message("Statistics have been calculated successfully.")
 }

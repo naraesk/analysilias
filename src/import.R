@@ -2,7 +2,7 @@
 # 
 # This file is part of ilias-analysis.
 # 
-# ilias-analysis is free software: you can redistribute it and/or modify
+# ilias-analysis is free software: you can redistibute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
@@ -128,13 +128,14 @@ importFromIlias <- function () {
 }
 
 insertQuestion <- function(row, qtiDoc, resultsDoc) {
+	print("INSERT SOLUTION")
 	ident <- paste("il_0_qst_", row["id"], sep="")
 	if (row[["questionType"]] == "SINGLE CHOICE QUESTION") {
 		numberOfAlternatives <- xpathSApply(qtiDoc, paste("count(//item[@ident='", ident ,"']//response_label)",sep="")) - 1
 # 		opts <<- sapply(c(0:numberOfAlternatives), function(x) xpathSApply(qtiDoc, paste("//item[@ident='", ident, "']//response_label[@ident=",x,"]/material/mattext", sep=''), xmlValue))
 # 		optsWithTitle		<- data.frame(row[["title"]], opts)
 		alternatives <<- append(alternatives, numberOfAlternatives)
-		solution_raw	<- xpathSApply(qtiDoc, paste("//item[@ident='", ident ,"']//setvar[.='1']/../displayfeedback", sep=""), xmlGetAttr, "linkrefid")
+		solution_raw	<- xpathSApply(qtiDoc, paste("//item[@ident='", ident ,"']//setvar[.>'1']/../displayfeedback", sep=""), xmlGetAttr, "linkrefid")
 		solution 	<- as.numeric(str_sub(solution_raw, -1))
 		solutions <<- append(solutions, solution)
 		
