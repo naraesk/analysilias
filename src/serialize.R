@@ -20,7 +20,7 @@ serialize <- function () {
 	save(users, questions, exam, file=path)
 	
 # 	generate list of grades
-	write.csv(users[, c("Pruefungsnummer", "mark")], file=paste(exam[["outputPath"]], "List of Grades", ".csv", sep=""),row.names=FALSE)
+	write.csv(users[, c("Pruefungsnummer", "Matrikel", "mark")], file=paste(exam[["outputPath"]], "List of Grades", ".csv", sep=""),row.names=FALSE)
 
 # 	generate grading schema
 	write.csv(marks[, c("grades", "score")], file=paste(exam[["outputPath"]], "Grading Schema.csv", sep=""), row.names=FALSE)
