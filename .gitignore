@@ -8,4 +8,7 @@
 *.rkworkplace
 *.autosave
 *.*autosave
+*.png
+*.org
 tmp/
+
