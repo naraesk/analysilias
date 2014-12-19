@@ -16,7 +16,7 @@
 # along with ilias-analysis.  If not, see <http://www.gnu.org/licenses/>.
 
 grades 	   <- c(1.0,  1.3,  1.7,  2.0,  2.3,  2.7,  3.0,  3.3,  3.7,  4.0)
-percentage <- c(0.87, 0.75, 0.67, 0.58, 0.50, 0.42, 0.33, 0.25, 0.12, 0)
+percentage <- c(0.95, 0.9, 0.85, 0.8, 0.75, 0.7, 0.65, 0.6, 0.55, 0.5)
 
 source("src/ilias.R")
 

@@ -42,6 +42,9 @@ exam 		<- list(mean=numeric(), maxScore=numeric(), minScore=numeric(), relScore=
 marks 	   <- data.frame(grades, percentage)
 alternatives	<- vector()
 solutions	<- vector()
+texts		<- vector()
+qvalue		<- vector()
+qid		<- vector()
 
 cleanup <- function() {
   rm(grades, percentage, marks, alternatives, envir = .GlobalEnv)

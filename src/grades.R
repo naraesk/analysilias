@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with ilias-analysis.  If not, see <http://www.gnu.org/licenses/>.
 
-calcGrades <- function (variant) {
+calcGrades <- function (variant = "no") {
   	exam[["maxScore"]] <<- nrow(questions)
   	if (variant == "22%") {
 		percentage <- c(0.87, 0.75, 0.67, 0.58, 0.50, 0.42, 0.33, 0.25, 0.12, 0)

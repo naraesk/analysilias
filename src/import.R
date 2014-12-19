@@ -103,8 +103,6 @@ importFromIlias <- function () {
 	comment  	<- sapply(comment_raw, function(x) str_sub(x, -2))
 	questionType 	<- xpathSApply(qtiDoc, "//qtimetadatafield/fieldlabel[text() = 'QUESTIONTYPE']/following-sibling::node()", xmlValue)
 
-	print(questionType)
-		
 # 	get metadata from description
 #	pattern: "foliensatz, seitenzahl, type diff"
 #	example: "oogp_21_qt, 21 – 34, LF"
@@ -128,23 +126,26 @@ importFromIlias <- function () {
 }
 
 insertQuestion <- function(row, qtiDoc, resultsDoc) {
-	print("INSERT SOLUTION")
 	ident <- paste("il_0_qst_", row["id"], sep="")
 	if (row[["questionType"]] == "SINGLE CHOICE QUESTION") {
 		numberOfAlternatives <- xpathSApply(qtiDoc, paste("count(//item[@ident='", ident ,"']//response_label)",sep="")) - 1
 # 		opts <<- sapply(c(0:numberOfAlternatives), function(x) xpathSApply(qtiDoc, paste("//item[@ident='", ident, "']//response_label[@ident=",x,"]/material/mattext", sep=''), xmlValue))
 # 		optsWithTitle		<- data.frame(row[["title"]], opts)
 		alternatives <<- append(alternatives, numberOfAlternatives)
-		solution_raw	<- xpathSApply(qtiDoc, paste("//item[@ident='", ident ,"']//setvar[.>'1']/../displayfeedback", sep=""), xmlGetAttr, "linkrefid")
+		solution_raw	<- xpathSApply(qtiDoc, paste("//item[@ident='", ident ,"']//setvar[.>'0']/../displayfeedback", sep=""), xmlGetAttr, "linkrefid")
 		solution 	<- as.numeric(str_sub(solution_raw, -1))
 		solutions <<- append(solutions, solution)
-		
+		for(i in 0:numberOfAlternatives) {
+			text <- xpathSApply(qtiDoc, paste("//item[@ident='", ident ,"']//response_label[@ident='",i,"']/material/mattext", sep=""), xmlValue)
+			texts <<- append(texts, text)
+		}
 		getAnswers(row[["id"]], resultsDoc=resultsDoc)
 		return()
 	}
 # 	TOOD: add question type specific querys
 	alternatives <<- append(alternatives,0)
 	solutions <<- append(solutions, 0)
+	texts <<- append(solutions, "")
 }
 
 getType <- function(string) {
@@ -173,21 +174,37 @@ secondsToHours <- function (sec) {
 }
 
 getAnswers <- function (id, resultsDoc) {
-	string 		<- paste("//tst_solutions/row[@question_fi=", id, "]", sep="")
-	value1 		<- as.numeric(xpathSApply(resultsDoc, string, xmlGetAttr, "value1"))
-	active_fi	<- as.numeric(xpathSApply(resultsDoc, string, xmlGetAttr, "active_fi"))
-	list 		<- data.frame(value1, active_fi)
-	list 		<- list[order (list[["active_fi"]]),]
-	answers[as.character(id)] <<- list[["value1"]]
+	avalue <<- vector()
+	aid <<- vector()
+	apply(answers["id"], 1, function (x) getAnswers2(x, id, resultsDoc=resultsDoc))
+	list 		<- data.frame(avalue, aid)
+	list 		<- list[order (list[["aid"]]),]
+	answers[as.character(id)] <<- list[["avalue"]]
 }
 
+getAnswers2 <- function (uid, qid, resultsDoc) {
+	string 		<- paste("//tst_solutions/row[@question_fi=", qid, "]", "[@active_fi=", uid, "]", sep="")
+	value1		<- as.numeric(xpathSApply(resultsDoc, string, xmlGetAttr, "value1"))
+	if(identical(value1, numeric(0))) { value1 <- 0 }
+	avalue <<- append(avalue, value1)
+	aid <<- append(aid, qid)
+}
 getPoints <- function (id, resultsDoc) {
-	string		<- paste("//tst_test_result/row[@question_fi=", id, "]", sep="")
+	qvalue <<- vector()
+	qid <<- vector()
+	apply(points["id"], 1, function (x) getPoints2(x, id, resultsDoc=resultsDoc))
+
+	list2	<- data.frame(qvalue, qid)
+	list2	<- list2[order (list2[["qid"]]),]
+	points[as.character(id)] <<- list2[["qvalue"]]
+}
+
+getPoints2 <- function (uid, q_id, resultsDoc) {
+	string		<- paste("//tst_test_result/row[@question_fi=", q_id, "]", "[@active_fi=", uid, "]", sep="")
 	value1		<- as.numeric(xpathSApply(resultsDoc, string, xmlGetAttr, "points"))
-	active_fi	<- as.numeric(xpathSApply(resultsDoc, string, xmlGetAttr, "active_fi"))
-	list		<- data.frame(value1, active_fi)
-	list 		<- list[order (list[["active_fi"]]),]
-	points[as.character(id)] <<- list[["value1"]]
+	if(identical(value1, numeric(0))) { value1 <- 0 }
+	qvalue <<- append(qvalue, value1)
+	qid <<- append(qid, q_id)
 }
 
 validatePruefungsnummer <- function (x) {
