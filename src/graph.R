@@ -19,6 +19,7 @@ generateGraphs <- function () {
 	generateITCGraph()
 	generateDistributonOfDifficulty()
 	generateDistributionOfGrades()
+	generateDistractorGraph()
 	
 	message("Graphs have been drawn successfully.")
 }
@@ -58,55 +59,82 @@ generateDistributionOfGrades <- function () {
 	graph$save(paste(exam[["outputPath"]], "Distribution of Grades.html", sep=""), standalone = TRUE)
 }
 
-#   Distraktorenanalyse
-#   q0 <- subset(questions, ! questions[["solution"]] == 0 )
-#   q1 <- subset(questions, ! questions[["solution"]] == 1 )
-#   q2 <- subset(questions, ! questions[["solution"]] == 2 )
-#   q3 <- subset(questions, ! questions[["solution"]] == 3 )
-#   
-#   
-#   print(length(q0))
-#   d1 <- data.frame(q0$title, q0[["Distraktor 1"]], c(1))
-#   d1 <- rename(d1, c("q0.title" = "title", "q0...Distraktor.1..." = "share", "c.1."="Distraktor"))
-#   df <- d1
-# 	
-#   if(length(q2) > 0)
-#   {
-# 	d2 <- data.frame(q1$title, q1[["Distraktor 2"]], c(2))
-# 	d2 <- rename(d2, c("q1.title" = "title", "q1...Distraktor.2..." = "share", "c.2."="Distraktor"))
-# 	df <- rbind(df, d2)
-#   }
-#   if(length(q3) > 0)
-#   {
-# 	d3 <- data.frame(q2$title, q2[["Distraktor 3"]], c(3))
-# 	d3 <- rename(d3, c("q2.title" = "title", "q2...Distraktor.3..." = "share", "c.3."="Distraktor"))
-# 	df <- rbind(df, d3)
-#   }
-#   if(length(q4) > 0)
-#   {
-# 	d4 <- data.frame(q3$title, q3[["Distraktor 4"]], c(4))
-# 	d4 <- rename(d4, c("q3.title" = "title", "q3...Distraktor.4..." = "share", "c.4."="Distraktor"))
-# 	df <- rbind(df, d4)
-#   }
-  
-#   df <- df[order (df[["title"]], df[["share"]]),]
-#   df[["order"]] <- c(1:3)
-#   testdf <- df
-  
-#   d1 <- dPlot(
-# 	x = "share", 
-# 	y = "title", 
-# 	groups = "Distraktor", 
-# 	data = df, 
-# 	type = 'bar',
-# 	barGap = 0.4,
-# 	bounds = list(x=850,width = 1000, height = 600),
-# 	heights=500)
-# test <- d1
-# 
-#   
-#   d1$xAxis(type = "addPctAxis")
-#   d1$yAxis(type = "addCategoryAxis")
-#   d1$set(width = 2000, height = 1000)
-#   d1$save(paste("./output/", exam$title, " - Distraktorenanalyse.html", sep=""), cdn = T)
-# }
+calculateDistractorShare <- function (x) {
+
+	if(x["Schwierigkeitsindex"] > 0.7) return ()
+	id <- x["id"]
+	for (i in 0:x["numberOfAlternatives"] ) {
+		if(x["solution"] != i) {
+			text <- texts[4 * (as.numeric(x["x"]) - 1) + 1]
+			share <- sum(answers[id] == i)/(nrow(answers)-sum(answers[id] == x["solution"]))
+			if ((share > 0.8) | (share < 0.1)) {
+				cat <- i + 5
+			} else {
+				cat <- i + 1
+			}
+			if(share == 0) {
+				share <- 0.02
+			}
+			row <- data.frame(cat, share, x["title"], "bla")
+			distractorData  <<- rbind(distractorData , row)
+		}
+	}
+}
+
+generateDistractorGraph <- function () {
+
+	distractorData <<- data.frame(distractor= character(0), share=numeric(0), title = character(0), text = character(0))
+	questions["x"] <<- c(1:nrow(questions))
+	apply(questions, 1, calculateDistractorShare)
+	distractorData <<- rename(distractorData , c("cat" = "distractor", "x..title.." = "title"))
+	distractorData <<- distractorData [order (distractorData [["distractor"]]),]
+	graph <- dPlot(
+		x = "share", 
+		y = "title",
+		groups = "distractor", 
+		data = distractorData, 
+		type = 'bar',
+		bounds = list(x=850,width = 1000, height = 600),
+		heights=500
+	)
+	graph$xAxis(type = "addPctAxis")
+	graph$yAxis(type = "addCategoryAxis", orderRule="title")
+	graph$defaultColors("#!d3.scale.ordinal().range(['#0066CC','#00892C','#808080','orange','red','red','red','red']).domain(['0','1','2','3','4','5','6','7','8'])!#")
+	graph$set(width = 2000, height = 1000)
+	graph$set(border = 200)
+
+graph$setTemplate(
+  afterScript = 
+  "<script>
+	subChart.series[0].getTooltipText = 
+	function (e) {
+		var rows = [];
+		if (this.categoryFields !== null && this.categoryFields !== undefined && this.categoryFields.length !== 0) {
+			this.categoryFields.forEach(function (c, i) {
+				if (c !== null && c !== undefined && e.aggField[i] !== null && e.aggField[i] !== undefined) {
+					var s = e.aggField[i]
+					if (s > 4) {
+						s = s - 4
+					}
+					rows.push(c + (s !== c ? ': ' + s : ''));
+				}
+			}, this);
+		}
+
+		if (this.x) {
+			this.x._getTooltipText(rows, e);
+		}
+
+		rows.push('Text: ' + lookup[e.cy].text);
+		// Get distinct text rows to deal with cases where 2 axes have the same dimensionality
+		return rows; //rows.filter(function (elem, pos) { return rows.indexOf(elem) === pos; });
+	}
+	
+	var lookup = {};
+		for (var i = 0, len = data.length; i < len; i++) {
+			lookup[data[i].title] = data[i];
+		}
+	</script>")
+graph$save(paste(exam[["outputPath"]], "Distractor analysis3.html", sep=""), standalone = TRUE)
+# 	graph$save(paste(exam[["outputPath"]], "Distractor analysis.html", sep=""), standalone = TRUE)
+}
