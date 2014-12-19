@@ -22,6 +22,8 @@ generateGraphs <- function () {
 	generateDistractorGraph()
 	
 	message("Graphs have been drawn successfully.")
+	
+	zip(paste("output/", exam[["title"]], ".zip", sep=""), exam[["outputPath"]])
 }
 
 generateITCGraph <- function () {
