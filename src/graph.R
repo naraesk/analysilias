@@ -135,6 +135,6 @@ graph$setTemplate(
 			lookup[data[i].title] = data[i];
 		}
 	</script>")
-graph$save(paste(exam[["outputPath"]], "Distractor analysis3.html", sep=""), standalone = TRUE)
+graph$save(paste(exam[["outputPath"]], "Distractor analysis.html", sep=""), standalone = TRUE)
 # 	graph$save(paste(exam[["outputPath"]], "Distractor analysis.html", sep=""), standalone = TRUE)
 }
