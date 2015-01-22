@@ -97,7 +97,7 @@ importFromIlias <- function () {
 # Reads information about questions from qti document
 
 	question_id_raw <- xpathSApply(qtiDoc, "//item", xmlGetAttr, "ident")
-	id 		<- sapply(question_id_raw, function(x) as.numeric(str_sub(x, -4)))
+	id		<- sapply(question_id_raw, function(x) as.numeric(str_sub(x,rev(gregexpr("_", x)[[1]])[1] - nchar(x))))
 	title 	  	<- xpathSApply(qtiDoc, "//item", xmlGetAttr, "title")
 	comment_raw 	<- xpathSApply(qtiDoc, "//item/qticomment", xmlValue)
 	comment  	<- sapply(comment_raw, function(x) str_sub(x, -2))
@@ -116,7 +116,7 @@ importFromIlias <- function () {
 	questions  		<<- data.frame (id, title, type, diff_tobe, questionType)
 	apply(questions["id"], 1, function (x) getPoints(x, resultsDoc=resultsDoc))
 	users			<<- users[order (users[["id"]]),]
-	exam[["title"]] 	<<- xpathSApply(qtiDoc, "//assessment", xmlGetAttr, "title")
+	exam[["title"]] 	<<- gsub("/", "", str_replace(xpathSApply(qtiDoc, "//assessment", xmlGetAttr, "title"), "//", ""))
 	tmpPath			<- paste("./output/", exam[["title"]], sep="")
 	dir.create(tmpPath, showWarnings = FALSE)
 	exam[["outputPath"]] 	<<- paste(tmpPath, "/", sep="")
@@ -125,8 +125,10 @@ importFromIlias <- function () {
 	questions["solution"] <<- solutions
 }
 
+trim <- function (x) gsub("^\\s+|\\s+$", "", x)
+
 insertQuestion <- function(row, qtiDoc, resultsDoc) {
-	ident <- paste("il_0_qst_", row["id"], sep="")
+	ident <- paste("il_0_qst_", trim(row["id"]), sep="")
 	if (row[["questionType"]] == "SINGLE CHOICE QUESTION") {
 		numberOfAlternatives <- xpathSApply(qtiDoc, paste("count(//item[@ident='", ident ,"']//response_label)",sep="")) - 1
 # 		opts <<- sapply(c(0:numberOfAlternatives), function(x) xpathSApply(qtiDoc, paste("//item[@ident='", ident, "']//response_label[@ident=",x,"]/material/mattext", sep=''), xmlValue))
