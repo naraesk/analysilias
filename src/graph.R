@@ -40,8 +40,8 @@ generateITCGraph <- function () {
 }
 
 generateDistributonOfDifficulty <- function () {
-	breaks <- c(0, 0.16666, 0.33333, 0.5, 0.66666, 0.83333, 1)
-	questions[["Schwierigkeit"]] <- cut(questions[["Schwierigkeitsindex"]], breaks, c(1:6))
+	breaks <- c(-0.1, 0.16666, 0.33333, 0.5, 0.66666, 0.83333, 1)
+	questions[["Schwierigkeit"]] <<- cut(questions[["Schwierigkeitsindex"]], breaks, c(1:6))
 	graphdata <- data.frame(table(questions[["Schwierigkeit"]], questions[["type"]]))
 	graphdata$label <- c("[0, 1/6)", "[1/6, 2/6)", "[2/6, 3/6)", "[3/6, 4/6)", "[4/6, 5/6)", "[5/6, 6/6)")
 	graph <- nPlot(Freq ~ label, group="Var2", data=graphdata, type="multiBarChart")
