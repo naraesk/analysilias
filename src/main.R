@@ -20,18 +20,10 @@ percentage <- c(0.95, 0.9, 0.85, 0.8, 0.75, 0.7, 0.65, 0.6, 0.55, 0.5)
 
 source("src/ilias.R")
 
-# There exist two ways for import data (see below)
-# In both cases, three objects are created:
-# users:		data of students (ID, points, mark, answers)
-# questions:	ID, title, solution of the questions, and some metrics.
-# exam: 		general information about the exam (title, average points, ... )
-# All further functions will access these objects.
-
 # Variant 1: Import Data from ILIAS export file and related pool
 # Just download the export file of your exam from ILIAS and place the zip file into the input folder
-# load("data/Pool OOGP.RData")
-
 import()
+
 # Variant 2:: Import of an already converted exam
 # loads the appropriate RData object from the data subdir
 # import("SP WS 1213")
