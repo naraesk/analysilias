@@ -53,14 +53,23 @@ generateDistributonOfDifficulty <- function () {
 generateDistributionOfGrades <- function () {
 	breaks <- c(1, 1.3, 1.7, 2, 2.3, 2.7, 3, 3.3, 3.7, 4, 5)
 	graphdata <- data.frame(table(factor(users[["mark"]], levels=breaks)))
+	testgraphdata <<- graphdata
+	graphdata$Freq <- graphdata$Freq/sum(graphdata$Freq)*100
 	graphdata$label <- c("1", "1.3", "1.7", "2", "2.3", "2.7", "3", "3.3", "3.7", "4", "5")
-	colnames(graphdata)[2] <- c("Frequency")
-	graph <- nPlot(Frequency ~ Var1, data=graphdata, type="multiBarChart")
+	colnames(graphdata)[2] <- c("Percent")
+	graph <- nPlot(Percent~ Var1, data=graphdata, type="multiBarChart")
+	maxY <- max(graphdata$Percent)
+	if(maxY < 50) maxY <- 50
 	graph$chart(showControls = FALSE)
 	graph$chart(reduceXTicks = FALSE)
+	graph$chart(showLegend = FALSE)
+	graph$yAxis(tickValues = c(0, 10, 20, 30, 40, 50))
+	graph$chart(forceY = c(0,maxY))
+	graph$yAxis(tickFormat = "#! function(d) {return d + '%'} !#")
 	graph$save(paste(exam[["outputPath"]], "Distribution of Grades.html", sep=""), standalone = TRUE)
 }
 
+# http://www.jaredlander.com/tag/rcharts/
 calculateDistractorShare <- function (x) {
 
 	if(x["Schwierigkeitsindex"] > 0.7) return ()
@@ -72,7 +81,7 @@ calculateDistractorShare <- function (x) {
 			if ((share > 0.8) | (share < 0.1)) {
 				cat <- i + 5
 			} else {
-				cat <- i + 1
+				cat <- i + 1 
 			}
 			if(share == 0) {
 				share <- 0.02
@@ -101,7 +110,7 @@ generateDistractorGraph <- function () {
 	)
 	graph$xAxis(type = "addPctAxis")
 	graph$yAxis(type = "addCategoryAxis", orderRule="title")
-	graph$defaultColors("#!d3.scale.ordinal().range(['#0066CC','#00892C','#808080','orange','red','red','red','red']).domain(['0','1','2','3','4','5','6','7','8'])!#")
+	graph$defaultColors("#!d3.scale.ordinal().range(['#0066CC','#00892C','#808080','orange','red','red','red','red']).domain(['1','2','3','4','5','6','7','8'])!#")
 	graph$set(width = 2000, height = 1000)
 	graph$set(border = 200)
 
