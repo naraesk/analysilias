@@ -42,6 +42,6 @@ calcScores <- function (percentage, variant) {
 }
 
 findGrade <- function (score) {
-	if(score < exam[["minScore"]]) return (5)
+	if(score < round(exam[["minScore"]])) return (5)
 	return (min(marks$grades[marks$score<=score]))
 }
