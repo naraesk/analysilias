@@ -23,12 +23,17 @@ library(rCharts)
 library(digest)
 library(plyr)
 library(base64enc)
+library(devtools)
 
 source("src/import.R")
 source("src/statistics.R")
 source("src/serialize.R")
 source("src/graph.R")
 source("src/grades.R")
+
+# install_github('rCharts', 'ramnathv')
+# install_github("rCharts", timelyportfolio, ref  = "dimple_layers")
+# install_github('timelyportfolio/rCharts@dimple_v2.0.0')
 
 options(stringsAsFactors = FALSE)
 

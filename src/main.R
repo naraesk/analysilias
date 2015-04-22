@@ -24,6 +24,8 @@ source("src/ilias.R")
 # Just download the export file of your exam from ILIAS and place the zip file into the input folder
 import()
 
+correct("13564")
+
 # Variant 2:: Import of an already converted exam
 # loads the appropriate RData object from the data subdir
 # import("SP WS 1213")
@@ -45,7 +47,7 @@ generateGraphs()
 
 # The serialize function does several things:
 # – save the relevant objects as RData into the data folder
-# — create csv file with user id and mark
+# – create csv file with user id and mark
 # – create wsv file with grading schema
 
 serialize()

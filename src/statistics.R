@@ -30,3 +30,16 @@ analyze <- function() {
 
 	message("Statistics have been calculated successfully.")
 }
+
+correct <- function(qid) {
+	mylist <- which(points[[eval(qid)]] == 0)
+	users <<- users[order(as.numeric(rownames(users))),]
+	lapply(mylist, incrementUserScore)
+	users <<- users[order(users["id"]),]
+}
+
+incrementUserScore <- function(id) {
+	 users[id,"score"] <<- users[id,"score"] +1
+	 print("Punkte erhöht für")
+	 print(id)
+}
