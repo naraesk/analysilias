@@ -33,7 +33,7 @@ analyze <- function() {
 
 correct <- function(qid) {
 	mylist <- which(points[[eval(qid)]] == 0)
-	users <<- users[order(as.numeric(rownames(users))),]
+	users <<- users[order(as.numeric(users[["id"]])),]
 	lapply(mylist, incrementUserScore)
 	users <<- users[order(users["id"]),]
 }

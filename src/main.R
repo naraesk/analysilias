@@ -24,7 +24,7 @@ source("src/ilias.R")
 # Just download the export file of your exam from ILIAS and place the zip file into the input folder
 import()
 
-correct("13564")
+# correct("17548")
 
 # Variant 2:: Import of an already converted exam
 # loads the appropriate RData object from the data subdir
@@ -63,3 +63,11 @@ serialize()
 # save(pool, file="data/Pool EVA.RData")
 
 cleanup()
+
+### Unterscheidung Info/Winf###
+
+#users_info <- users[ which(grepl("W", users$Pruefungsnummer)),]
+#mean(users_info$mark)
+
+#users_winf <- users[ which(!grepl("W", users$Pruefungsnummer)),]
+#mean(users_winf$mark)

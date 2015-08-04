@@ -53,10 +53,9 @@ generateDistributonOfDifficulty <- function () {
 generateDistributionOfGrades <- function () {
 	breaks <- c(1, 1.3, 1.7, 2, 2.3, 2.7, 3, 3.3, 3.7, 4, 5)
 	graphdata <- data.frame(table(factor(users[["mark"]], levels=breaks)))
-	testgraphdata <<- graphdata
-	graphdata$Freq <- graphdata$Freq/sum(graphdata$Freq)*100
+	graphdata$rel <- round(graphdata$Freq/sum(graphdata$Freq)*100,1)
 	graphdata$label <- c("1", "1.3", "1.7", "2", "2.3", "2.7", "3", "3.3", "3.7", "4", "5")
-	colnames(graphdata)[2] <- c("Percent")
+	colnames(graphdata)[3] <- c("Percent")
 	graph <- nPlot(Percent~ Var1, data=graphdata, type="multiBarChart")
 	maxY <- max(graphdata$Percent)
 	if(maxY < 50) maxY <- 50
@@ -66,6 +65,10 @@ generateDistributionOfGrades <- function () {
 	graph$yAxis(tickValues = c(0, 10, 20, 30, 40, 50))
 	graph$chart(forceY = c(0,maxY))
 	graph$yAxis(tickFormat = "#! function(d) {return d + '%'} !#")
+	graph$chart(tooltipContent = "#! function(key, x, y, e){ 
+		return e.point.Freq + ' Personen (' + y + ')'
+	} !#"
+)
 	graph$save(paste(exam[["outputPath"]], "Distribution of Grades.html", sep=""), standalone = TRUE)
 }
 
@@ -114,38 +117,37 @@ generateDistractorGraph <- function () {
 	graph$set(width = 2000, height = 1000)
 	graph$set(border = 200)
 
-graph$setTemplate(
-  afterScript = 
-  "<script>
-	subChart.series[0].getTooltipText = 
-	function (e) {
-		var rows = [];
-		if (this.categoryFields !== null && this.categoryFields !== undefined && this.categoryFields.length !== 0) {
-			this.categoryFields.forEach(function (c, i) {
-				if (c !== null && c !== undefined && e.aggField[i] !== null && e.aggField[i] !== undefined) {
-					var s = e.aggField[i]
-					if (s > 4) {
-						s = s - 4
+	graph$setTemplate(
+		afterScript = 
+			"<script>
+				subChart.series[0].getTooltipText = 
+				function (e) {
+					var rows = [];
+					if (this.categoryFields !== null && this.categoryFields !== undefined && this.categoryFields.length !== 0) {
+						this.categoryFields.forEach(function (c, i) {
+							if (c !== null && c !== undefined && e.aggField[i] !== null && e.aggField[i] !== undefined) {
+								var s = e.aggField[i]
+								if (s > 4) {
+									s = s - 4
+								}
+								rows.push(c + (s !== c ? ': ' + s : ''));
+							}
+						}, this);
 					}
-					rows.push(c + (s !== c ? ': ' + s : ''));
+
+					if (this.x) {
+						this.x._getTooltipText(rows, e);
+					}
+
+					rows.push('Text: ' + lookup[e.cy].text);
+					// Get distinct text rows to deal with cases where 2 axes have the same dimensionality
+					return rows; //rows.filter(function (elem, pos) { return rows.indexOf(elem) === pos; });
 				}
-			}, this);
-		}
-
-		if (this.x) {
-			this.x._getTooltipText(rows, e);
-		}
-
-		rows.push('Text: ' + lookup[e.cy].text);
-		// Get distinct text rows to deal with cases where 2 axes have the same dimensionality
-		return rows; //rows.filter(function (elem, pos) { return rows.indexOf(elem) === pos; });
-	}
-	
-	var lookup = {};
-		for (var i = 0, len = data.length; i < len; i++) {
-			lookup[data[i].title] = data[i];
-		}
-	</script>")
-graph$save(paste(exam[["outputPath"]], "Distractor analysis.html", sep=""), standalone = TRUE)
-# 	graph$save(paste(exam[["outputPath"]], "Distractor analysis.html", sep=""), standalone = TRUE)
+				
+				var lookup = {};
+					for (var i = 0, len = data.length; i < len; i++) {
+						lookup[data[i].title] = data[i];
+					}
+			</script>")
+	graph$save(paste(exam[["outputPath"]], "Distractor analysis.html", sep=""), standalone = TRUE)
 }
