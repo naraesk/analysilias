@@ -1,17 +1,19 @@
 ### What is this repository for? ###
 
 This Software extends the analysis possibilities of [ILIAS](ilias.de) an e-assessment system. It provides the following features:
+
 * computation of grades (variable schema)
 * computation of Item-total correlation and difficulty for questions
 * generate some diagrams
 
 **Limitations**
-• only supports single choice questions
-• one point per question is assumed
+
+* only supports single choice questions
 
 ### How do I get set up? ###
 
 You need [R](http://www.r-project.org/) and the following R-libs:
+
 * psych
 * string
 * R.utils
