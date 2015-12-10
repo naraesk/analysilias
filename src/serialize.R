@@ -25,5 +25,13 @@ serialize <- function () {
 # 	generate grading schema
 	write.csv(marks[, c("grades", "score")], file=paste(exam[["outputPath"]], "Grading Schema.csv", sep=""), row.names=FALSE)
 	
+#	generate general information
+	infoFile<-file(paste(exam[["outputPath"]], "Information.txt", sep=""), 'w')
+	write(paste("Number of participants: ", nrow(users), sep=""), infoFile)
+	write(paste("Failure rate: ", exam[["rate"]], sep=""), infoFile, append = TRUE)
+	write(paste("Grade point average: ", exam[["mean"]], sep=""), infoFile, append=TRUE)
+	write(paste("Standard deviation: ", exam[["sd"]], sep=""), infoFile, append=TRUE)
+	close(infoFile)
+	
 	message("List of grades and grading schema have been written successfully.")
 }

@@ -28,10 +28,11 @@ calcGrades <- function (variant = "no") {
 		exam[["minScore"]] <<- percentage[10] * exam[["maxScore"]]
 		print("falsch")
 	}
-	marks["score"]     <<- sapply(marks$percentage, calcScores, variant=variant)
-	users["mark"]      <<- sapply(users$score, findGrade)
-	exam[["mean"]]     <<- mean(users[["mark"]])
-	exam[["rate"]]     <<- length(users$mark[users[["mark"]] == 5]) / nrow(users)
+	marks["score"]	<<- sapply(marks$percentage, calcScores, variant=variant)
+	users["mark"]   <<- sapply(users$score, findGrade)
+	exam[["mean"]]  <<- round(mean(users[["mark"]]), 1)
+	exam[["rate"]]  <<- round(length(users$mark[users[["mark"]] == 5]) / nrow(users), 2)
+	exam[["sd"]] 	<<- round(sqrt(var(users["mark"])), 3)
 	
 	message("Grades have been calculated successfully.")
 }
