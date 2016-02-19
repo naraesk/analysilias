@@ -32,7 +32,7 @@ importFromIlias <- function () {
 	dir.create("tmp", showWarnings = FALSE)
 	
 	unzip(zippath, exdir="tmp")
-	file.rename(zippath, paste("backup/", zipfile, sep=""))
+ 	file.rename(zippath, paste("backup/", zipfile, sep=""))
 	dir 		<- list.files("tmp")[1] 
 
 	qtiFileName 	<- gsub("tst", "qti", dir)
@@ -42,10 +42,11 @@ importFromIlias <- function () {
 
 # Reads user info from the results file
 
-	id   		<- as.numeric(xpathSApply(resultsDoc, "//tst_active/row", xmlGetAttr, "active_id"))
-	name 		<- xpathSApply(resultsDoc, "//tst_active/row", xmlGetAttr, "fullname")
+	id   		<- as.numeric(xpathSApply(resultsDoc, "//tst_active/row[@tries=1 or @lastindex>0]", xmlGetAttr, "active_id"))
+	name 		<- xpathSApply(resultsDoc, "//tst_active/row[@tries=1 or @lastindex>0]", xmlGetAttr, "fullname")
 	score     	<- as.numeric(xpathSApply(resultsDoc, "//tst_pass_result/row", xmlGetAttr, "points"))
 	duration_raw	<- as.numeric(xpathSApply(resultsDoc, "//tst_pass_result/row", xmlGetAttr, "workingtime"))
+
 	duration	<- sapply(duration_raw, secondsToHours)
 	tmp		<- data.frame(id, name)
 	tmp		<- tmp[order (tmp[["id"]]),]
@@ -62,7 +63,7 @@ importFromIlias <- function () {
 	csv  			<- read.csv2(csvpath, header = TRUE, stringsAsFactors = FALSE, encoding = "latin1")
 	csv			<- csv[csv$Name!="Name",]
 	colnames(csv)[1:11]	<- c("name", "mail", "Matrikel", "Pruefungsnummer", "score", c(6:10), "duration")
-	file.rename(csvpath, paste("backup/", csvfile, sep=""))
+ 	file.rename(csvpath, paste("backup/", csvfile, sep=""))
 	csvdata			<- data.frame(csv["name"], csv["Matrikel"], csv["Pruefungsnummer"], csv["score"], csv["duration"])
 	csvdata 		<- csvdata[order (csvdata[["name"]], csvdata[["duration"]], csvdata[["score"]]),]
 	
