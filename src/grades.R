@@ -33,6 +33,8 @@ calcGrades <- function (variant = "no") {
 	exam[["mean"]]  <<- round(mean(users[["mark"]]), 1)
 	exam[["rate"]]  <<- round(length(users$mark[users[["mark"]] == 5]) / nrow(users), 2)
 	exam[["sd"]] 	<<- round(sqrt(var(users["mark"])), 3)
+	exam[["meanScore"]] <<- round(mean(users[["score"]]),1)
+	exam[["scoreSd"]] <<- round(sqrt(var(users["score"])),3)
 	
 	message("Grades have been calculated successfully.")
 }
@@ -43,6 +45,8 @@ calcScores <- function (percentage, variant) {
 }
 
 findGrade <- function (score) {
+	message("start findGrape")
+# 	warning(exam[["minScore"]])
 	if(score < round(exam[["minScore"]])) return (5)
 	return (min(marks$grades[marks$score<=score]))
 }
