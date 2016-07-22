@@ -40,7 +40,9 @@ calcGrades <- function (variant = "no") {
 }
 
 calcScores <- function (percentage, variant) {
-	if(variant == "22%") return (round(percentage * exam[["relScore"]] + exam[["minScore"]]))
+	if(variant == "22%") {
+		return (round(percentage * exam[["relScore"]] + exam[["minScore"]]))
+	}
 	return (round(percentage * exam[["maxScore"]]))
 }
 

@@ -44,8 +44,8 @@ importFromIlias <- function () {
 
 	id   		<- as.numeric(xpathSApply(resultsDoc, "//tst_active/row[@tries=1 or @lastindex>0]", xmlGetAttr, "active_id"))
 	name 		<- xpathSApply(resultsDoc, "//tst_active/row[@tries=1 or @lastindex>0]", xmlGetAttr, "fullname")
-	score     	<- as.numeric(xpathSApply(resultsDoc, "//tst_pass_result/row", xmlGetAttr, "points"))
-	duration_raw	<- as.numeric(xpathSApply(resultsDoc, "//tst_pass_result/row", xmlGetAttr, "workingtime"))
+	score     	<- as.numeric(xpathSApply(resultsDoc, "//tst_pass_result/row[@workingtime > 0]", xmlGetAttr, "points"))
+	duration_raw	<- as.numeric(xpathSApply(resultsDoc, "//tst_pass_result/row[@workingtime > 0]", xmlGetAttr, "workingtime"))
 
 	duration	<- sapply(duration_raw, secondsToHours)
 	tmp		<- data.frame(id, name)
@@ -57,11 +57,11 @@ importFromIlias <- function () {
 
 # Reads name, duration and score from CSV
 # they are used to match the data from xml, because there is no unique ID that occurs in both documents
-
 	csvfile 		<- list.files("input/", pattern="*.csv")[1]
 	csvpath			<- paste("input/", csvfile, sep="")
-	csv  			<- read.csv2(csvpath, header = TRUE, stringsAsFactors = FALSE, encoding = "latin1")
+	csv  			<- read.csv2(csvpath, header = TRUE, stringsAsFactors = FALSE, encoding = "latin1", skipNul = TRUE)
 	csv			<- csv[csv$Name!="Name",]
+	csv <- csv[!(csv$Benutzername == ""),] 	# remove empty lines
 	colnames(csv)[1:11]	<- c("name", "mail", "Matrikel", "Pruefungsnummer", "score", c(6:10), "duration")
  	file.rename(csvpath, paste("backup/", csvfile, sep=""))
 	csvdata			<- data.frame(csv["name"], csv["Matrikel"], csv["Pruefungsnummer"], csv["score"], csv["duration"])
@@ -187,7 +187,7 @@ getAnswers <- function (id, resultsDoc) {
 
 getAnswers2 <- function (uid, qid, resultsDoc) {
 	string 		<- paste("//tst_solutions/row[@question_fi=", qid, "]", "[@active_fi=", uid, "]", sep="")
-	value1		<- as.numeric(xpathSApply(resultsDoc, string, xmlGetAttr, "value1"))
+	value1		<- max(as.numeric(xpathSApply(resultsDoc, string, xmlGetAttr, "value1")))
 	if(identical(value1, numeric(0))) { value1 <- 0 }
 	avalue <<- append(avalue, value1)
 	aid <<- append(aid, qid)
@@ -204,8 +204,8 @@ getPoints <- function (id, resultsDoc) {
 
 getPoints2 <- function (uid, q_id, resultsDoc) {
 	string		<- paste("//tst_test_result/row[@question_fi=", q_id, "]", "[@active_fi=", uid, "]", sep="")
-	value1		<- as.numeric(xpathSApply(resultsDoc, string, xmlGetAttr, "points"))
-	if(identical(value1, numeric(0))) { value1 <- 0 }
+	value1		<<- max(as.numeric(xpathSApply(resultsDoc, string, xmlGetAttr, "points")))
+	if(identical(value1, numeric(0))) { value1 <<- 0 }
 	qvalue <<- append(qvalue, value1)
 	qid <<- append(qid, q_id)
 }
