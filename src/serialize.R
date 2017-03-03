@@ -20,10 +20,10 @@ serialize <- function () {
 	save(users, questions, exam, file=path)
 	
 # 	generate list of grades
-	write.csv(users[, c("Pruefungsnummer", "Matrikel", "mark")], file=paste(exam[["outputPath"]], "List of Grades", ".csv", sep=""),row.names=FALSE)
+	write.csv2(users[, c("Matrikel", "mark")], file=paste(exam[["outputPath"]], "List of Grades", ".csv", sep=""),row.names=FALSE)
 
 # 	generate grading schema
-	write.csv(marks[, c("grades", "score")], file=paste(exam[["outputPath"]], "Grading Schema.csv", sep=""), row.names=FALSE)
+	write.csv2(marks[, c("grades", "score")], file=paste(exam[["outputPath"]], "Grading Schema.csv", sep=""), row.names=FALSE)
 	
 #	generate general information
 	infoFile<-file(paste(exam[["outputPath"]], "Information.txt", sep=""), 'w')
@@ -33,7 +33,10 @@ serialize <- function () {
 	write(paste("Standard deviation: ", exam[["sd"]], sep=""), infoFile, append = TRUE)
 	write(paste("Score average: ", exam[["meanScore"]], sep=""), infoFile, append = TRUE)
 	write(paste("Standard deviation: ", exam[["scoreSd"]], sep=""), infoFile, append = TRUE)
+	write(paste("Corrected questions: ", correctedQuestions, sep=""), infoFile, append = TRUE)
 	close(infoFile)
+	
+	file.copy("README", exam[["outputPath"]])
 	
 	message("List of grades and grading schema have been written successfully.")
 }

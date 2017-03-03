@@ -47,7 +47,6 @@ calcScores <- function (percentage, variant) {
 }
 
 findGrade <- function (score) {
-	message("start findGrape")
 # 	warning(exam[["minScore"]])
 	if(score < round(exam[["minScore"]])) return (5)
 	return (min(marks$grades[marks$score<=score]))

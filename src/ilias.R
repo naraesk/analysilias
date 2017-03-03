@@ -50,8 +50,9 @@ solutions	<- vector()
 texts		<- vector()
 qvalue		<- vector()
 qid		<- vector()
+correctedQuestions <- vector()
 
 cleanup <- function() {
-  rm(grades, percentage, marks, alternatives, envir = .GlobalEnv)
+  rm(grades, percentage, marks, alternatives,correctedQuestions, envir = .GlobalEnv)
   unlink("tmp", recursive=TRUE)
 }

@@ -17,26 +17,44 @@
 
 generateGraphs <- function () {
 	generateITCGraph()
+	generateSelektionsGraph()
 	generateDistributonOfDifficulty()
 	generateDistributionOfGrades()
 	generateDistractorGraph()
 	
 	message("Graphs have been drawn successfully.")
-	
-	zip(paste("output/", exam[["title"]], ".zip", sep=""), exam[["outputPath"]])
+	setwd(exam[["outputPath"]])
+	test <- paste("../", exam["title"], sep="")
+	test2 <- paste(test, ".zip", sep="")
+	zip(test2, ".")
+	setwd("..")
+	setwd("..")
 }
 
 generateITCGraph <- function () {
 	graph <- nPlot(Trennschärfe ~ Schwierigkeitsindex, group="type", data=questions, type="scatterChart")
 	graph$chart(tooltipContent = "#! function(key, x, y, e) {return e.point.title} !#")
 	graph$chart(forceY = c(-1, 1))
-	graph$chart(color = c("green", "blue", "red"))
+	graph$chart(color = c("green", "blue", "red", "yellow"))
 	graph$chart(forceX = c(0, 1))
 	graph$yAxis(axisLabel = "Item-total correlation")
 	graph$xAxis(axisLabel = "Difficulty")
 	graph$xAxis(tickValues = c(0, 0.33, 0.67, 1))
 	graph$yAxis(tickValues = c(-1, 0, 0.33, 0.67, 1))
-	graph$save(paste(exam[["outputPath"]], "Overview.html", sep=""), standalone = TRUE)
+	graph$save(paste(exam[["outputPath"]], "ITC.html", sep=""), standalone = TRUE)
+}
+
+generateSelektionsGraph <- function () {
+	graph <- nPlot(Selektionswert ~ Schwierigkeitsindex, group="type", data=questions, type="scatterChart")
+	graph$chart(tooltipContent = "#! function(key, x, y, e) {return e.point.title} !#")
+	graph$chart(forceY = c(-1, 1))
+	graph$chart(color = c("green", "blue", "red", "yellow"))
+	graph$chart(forceX = c(0, 1))
+	graph$yAxis(axisLabel = "Selektionswert")
+	graph$xAxis(axisLabel = "Difficulty")
+	graph$xAxis(tickValues = c(0, 0.33, 0.67, 1))
+	graph$yAxis(tickValues = c(-1, 0, 0.33, 0.67, 1))
+	graph$save(paste(exam[["outputPath"]], "Selektionswert.html", sep=""), standalone = TRUE)
 }
 
 generateDistributonOfDifficulty <- function () {

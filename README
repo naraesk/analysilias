@@ -1,0 +1,23 @@
+Hier ein paar kurze Erklärungen zu den Grafiken.
+
+
+# Distractor analysis #
+
+NOTE: Funktioniert nicht mit Chrome/Chromium, bitte z.B. Firefox verwenden
+
+Dargestellt ist für jede Frage, wie sich die Antworten auf die falschen Antwortmöglichkeiten (=Distraktoren) verteilen.
+Distraktoren mit einem Anteil von >80% oder <10% sind rot eingefärbt, da sie zu attraktiv bzw. zu unplausibel sind und evtl. überarbeitet werden sollten.
+Fragen mit einem Schwierigkeitsindex (s.u.) von > 0.7 werden nicht dargestellt, da in der Regel keine aussagekräftige Analyse möglich ist.
+
+
+# Distribution of Difficulty #
+
+Auf der x-Achse ist der Schwierigkeitsindex abgetragen. Dieser gibt die Schwierigkeit einer Frage im Intervall [0,1] an, wobei 0 schwer und 1 einfach bedeutet.
+Der Index ist in 6 Intervalle aufgeteilt, auf der y-Achse sind die Häufigkeiten abgetragen.
+
+
+# Overview #
+
+Auf der x-Achse ist der Schwierigkeitsindex abgetragen.
+auf der y-Achse ist die Trennschärfe abgetragen. Die Trennschärfe gibt an, wie gut das Ergebnis einer Frage mit dem Ergebnis des gesamten Tests korreliert.
+Je höher die Trennschärfe, desto besser. Aufgaben mit einem hohen Schwierigkeitsindex werden aber um die 0 herum liegen. Negative Trennschärfen sind zu vermeiden, entsprechende Aufgaben sollten ggf. überarbeitet werden.

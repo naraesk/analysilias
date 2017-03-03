@@ -15,8 +15,11 @@
 # You should have received a copy of the GNU General Public License
 # along with ilias-analysis.  If not, see <http://www.gnu.org/licenses/>.
 
+# require(devtools)
+# install_github('ramnathv/rCharts')
+
 import <- function(file)
-{
+{       
 	if(missing(file)) {
 		importFromIlias()
 	}
@@ -71,7 +74,7 @@ importFromIlias <- function () {
 	colnames(users)[1:4]		<<- c("name", "Matrikel", "Pruefungsnummer", "score")
 	users				<<- users[order (users[["name"]], users[["duration"]], users[["score"]]),]
 	users[["Matrikel"]] 		<<- csvdata[["Matrikel"]]
-	users[["Pruefungsnummer"]] 	<<- csvdata[["Pruefungsnummer"]]
+# 	users[["Pruefungsnummer"]] 	<<- csvdata[["Pruefungsnummer"]]
 	
 	tmp			<- tmp[order (tmp[["id"]]),]
 	points 			<<- data.frame(tmp[["id"]])
@@ -80,18 +83,17 @@ importFromIlias <- function () {
 	
 # Some checks to validate the read data
 
-	lapply(users[["Pruefungsnummer"]], validatePruefungsnummer)
 	rownames(users) <<- c(1:nrow(users))
 	
 	testAssignment <- data.frame(users["name"], users["score"], users[["duration"]])
 	if (is.element(TRUE, duplicated(testAssignment))) {
-		warning("Their are students with identical name and score. the assignment of Pruefungsnummer and Matrikel might be wrong")
+		warning("Their are students with identical name and score. the assignment of Matrikel might be wrong")
 		return()
 	}
 	if (!isTRUE(all.equal(users["score"], csvdata["score"])) 
 	|| !isTRUE(all.equal(users["duration"], csvdata["duration"]))
 	|| !isTRUE(all.equal(users["name"], csvdata["name"]))) {
-		warning("The assignment of Matrikel and Pruefungsnummer might be wrong.")
+		warning("The assignment of Matrikel might be wrong.")
 # 		return()
 	}
 	
@@ -208,13 +210,4 @@ getPoints2 <- function (uid, q_id, resultsDoc) {
 	if(identical(value1, numeric(0))) { value1 <<- 0 }
 	qvalue <<- append(qvalue, value1)
 	qid <<- append(qid, q_id)
-}
-
-validatePruefungsnummer <- function (x) {
-	if(is.na(x)) {
-		warning("Pruefungsnummer is not available")
-		return()
-	}
-	if( x>99999) warning("Pruefungsnummer with 6 digits")
-	if( x<10000) warning("Pruefungsnummer with 4 digits")
 }
