@@ -11,4 +11,4 @@
 *.png
 *.org
 tmp/
-
+output/
