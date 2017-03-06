@@ -16,8 +16,18 @@ Auf der x-Achse ist der Schwierigkeitsindex abgetragen. Dieser gibt die Schwieri
 Der Index ist in 6 Intervalle aufgeteilt, auf der y-Achse sind die Häufigkeiten abgetragen.
 
 
-# Overview #
+# ITC #
 
 Auf der x-Achse ist der Schwierigkeitsindex abgetragen.
-auf der y-Achse ist die Trennschärfe abgetragen. Die Trennschärfe gibt an, wie gut das Ergebnis einer Frage mit dem Ergebnis des gesamten Tests korreliert.
+Auf der y-Achse ist die Trennschärfe abgetragen.
+
+Die Trennschärfe gibt an, wie gut das Ergebnis einer Frage mit dem Ergebnis des gesamten Tests korreliert.
 Je höher die Trennschärfe, desto besser. Aufgaben mit einem hohen Schwierigkeitsindex werden aber um die 0 herum liegen. Negative Trennschärfen sind zu vermeiden, entsprechende Aufgaben sollten ggf. überarbeitet werden.
+
+# Selection Index #
+
+Auf der x-Achse ist der Schwierigkeitsindex abgetragen.
+Auf der y-Achse ist der Selektionskennwert abgetragen.
+
+Aufgaben mit extremer Schwierigkeit sind besonders anfällig für niedrige Trennschärfen und würden vorschnell aussortiert. Der Selektionskennwert relativiert dies. 
+Die Trennschärfe bleibt aber das wichtigere Kriterium.
