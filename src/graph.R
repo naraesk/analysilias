@@ -50,11 +50,11 @@ generateSelektionsGraph <- function () {
 	graph$chart(forceY = c(-1, 1))
 	graph$chart(color = c("green", "blue", "red", "yellow"))
 	graph$chart(forceX = c(0, 1))
-	graph$yAxis(axisLabel = "Selektionswert")
+	graph$yAxis(axisLabel = "Selection index")
 	graph$xAxis(axisLabel = "Difficulty")
 	graph$xAxis(tickValues = c(0, 0.33, 0.67, 1))
 	graph$yAxis(tickValues = c(-1, 0, 0.33, 0.67, 1))
-	graph$save(paste(exam[["outputPath"]], "Selektionswert.html", sep=""), standalone = TRUE)
+	graph$save(paste(exam[["outputPath"]], "Selection index.html", sep=""), standalone = TRUE)
 }
 
 generateDistributonOfDifficulty <- function () {

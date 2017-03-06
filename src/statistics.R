@@ -25,7 +25,8 @@ analyze <- function() {
 	questions["Trennschärfe"] 		<<- score[["item.stats"]][["r"]]
 	questions["Schwierigkeitsindex"] 	<<- score[["item.stats"]][["mean"]]
 	questions["Standardabweichung"] 	<<- score[["item.stats"]][["sd"]]
-	questions["Selektionswert"]             <<- questions["Trennschärfe"]/(sqrt(2* questions[["Schwierigkeitsindex"]] * (1 - questions[["Schwierigkeitsindex"]])))
+	questions["Selektionswert"]             <<- questions["Trennschärfe"]/( 2 * questions[["Standardabweichung"]])
+	#questions["Selektionswert"]             <<- questions["Trennschärfe"]/(sqrt(2* questions[["Schwierigkeitsindex"]] * (1 - questions[["Schwierigkeitsindex"]])))
 	
 # 	lapply(c(0:max(questions["numberOfAlternatives"])), function (x) questions[[paste("Distractor", x)]] <<- score[["item.stats"]][[as.character(x)]])
         
