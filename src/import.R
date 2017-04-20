@@ -30,14 +30,11 @@ import <- function(file)
 }
 
 importFromIlias <- function () {
-	zipfile		<- list.files("input/", pattern="*.zip")[1]
-	zippath 	<- paste("input/", zipfile, sep="")
+	zipfile		<<- list.files("input/", pattern="*.zip")[1]
+	zippath 	<<- paste("input/", zipfile, sep="")
 	dir.create("tmp", showWarnings = FALSE)
-	
 	unzip(zippath, exdir="tmp")
- 	file.rename(zippath, paste("backup/", zipfile, sep=""))
 	dir 		<- list.files("tmp")[1] 
-
 	qtiFileName 	<- gsub("tst", "qti", dir)
 	resultsFileName <- gsub("tst", "results", dir)
 	qtiDoc 	 	<- xmlInternalTreeParse(paste("tmp/", dir, "/", qtiFileName, ".xml", sep=""))
@@ -60,13 +57,12 @@ importFromIlias <- function () {
 
 # Reads name, duration and score from CSV
 # they are used to match the data from xml, because there is no unique ID that occurs in both documents
-	csvfile 		<- list.files("input/", pattern="*.csv")[1]
-	csvpath			<- paste("input/", csvfile, sep="")
+	csvfile 		<<- list.files("input/", pattern="*.csv")[1]
+	csvpath			<<- paste("input/", csvfile, sep="")
 	csv  			<- read.csv2(csvpath, header = TRUE, stringsAsFactors = FALSE, encoding = "latin1", skipNul = TRUE)
 	csv			<- csv[csv$Name!="Name",]
 	csv <- csv[!(csv$Benutzername == ""),] 	# remove empty lines
 	colnames(csv)[1:11]	<- c("name", "mail", "Matrikel", "Pruefungsnummer", "score", c(6:10), "duration")
- 	file.rename(csvpath, paste("backup/", csvfile, sep=""))
 	csvdata			<- data.frame(csv["name"], csv["Matrikel"], csv["Pruefungsnummer"], csv["score"], csv["duration"])
 	csvdata 		<- csvdata[order (csvdata[["name"]], csvdata[["duration"]], csvdata[["score"]]),]
 	

@@ -19,6 +19,11 @@ serialize <- function () {
 	path <- paste("data/", exam[["title"]], ".RData", sep="")
 	save(users, questions, exam, file=path)
 	
+	backupPath <- paste(exam[["outputPath"]], "backup/", sep="")
+	dir.create(backupPath, showWarnings = FALSE)
+	file.rename(zippath, paste(backupPath, zipfile, sep=""))
+	file.rename(csvpath, paste(backupPath, csvfile, sep=""))
+	
 # 	generate list of grades
 	write.csv2(users[, c("Matrikel", "mark")], file=paste(exam[["outputPath"]], "List of Grades", ".csv", sep=""),row.names=FALSE)
 
