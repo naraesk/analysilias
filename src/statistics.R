@@ -41,6 +41,14 @@ correct <- function(qid) {
 	correctedQuestions <<- c(correctedQuestions, qid)
 }
 
+correct <- function(qid, distractor) {
+	mylist <- which(answers[[eval(qid)]]  == distractor)
+	users <<- users[order(as.numeric(users[["id"]])),]
+	lapply(mylist, incrementUserScore)
+	users <<- users[order(users["id"]),]
+	correctedQuestions <<- c(correctedQuestions, qid)
+}
+
 incrementUserScore <- function(id) {
 	 users[id,"score"] <<- users[id,"score"] +1
 }
