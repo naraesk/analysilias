@@ -204,6 +204,7 @@ getPoints2 <- function (uid, q_id, resultsDoc) {
 	string		<- paste("//tst_test_result/row[@question_fi=", q_id, "]", "[@active_fi=", uid, "]", sep="")
 	value1		<<- max(as.numeric(xpathSApply(resultsDoc, string, xmlGetAttr, "points")))
 	if(identical(value1, numeric(0))) { value1 <<- 0 }
+	if(is.infinite(value1)) { value1 <<- 0 }
 	qvalue <<- append(qvalue, value1)
 	qid <<- append(qid, q_id)
 }

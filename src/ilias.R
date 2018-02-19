@@ -25,6 +25,9 @@ library(plyr)
 library(base64enc)
 library(devtools)
 
+#install.packages("stringi")
+
+
 source("src/import.R")
 source("src/statistics.R")
 source("src/serialize.R")

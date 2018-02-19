@@ -19,6 +19,7 @@ analyze <- function() {
 	
 	binPoints <- points
 	binPoints[binPoints > 1] <- 1
+	binPoints[binPoints < 1] <- 0
 	
 	score <<- score.multiple.choice(as.vector(rep(1,ncol(binPoints) -1)), binPoints[2:ncol(binPoints)], totals = TRUE, score = TRUE, short = FALSE, missing = FALSE)
 	
@@ -41,7 +42,7 @@ correct <- function(qid) {
 	correctedQuestions <<- c(correctedQuestions, qid)
 }
 
-correct <- function(qid, distractor) {
+correct2 <- function(qid, distractor) {
 	mylist <- which(answers[[eval(qid)]]  == distractor)
 	users <<- users[order(as.numeric(users[["id"]])),]
 	lapply(mylist, incrementUserScore)
