@@ -34,7 +34,9 @@ analyze <- function() {
 	message("Statistics have been calculated successfully.")
 }
 
-correct <- function(qid) {
+# Question with qid will be treated as correct for everybody
+
+correctQuestion <- function(qid) {
 	mylist <- which(points[[eval(qid)]] == 0)
 	users <<- users[order(as.numeric(users[["id"]])),]
 	lapply(mylist, incrementUserScore)
@@ -42,7 +44,9 @@ correct <- function(qid) {
 	correctedQuestions <<- c(correctedQuestions, qid)
 }
 
-correct2 <- function(qid, distractor) {
+# Distractor distractor of question with qid will be treaded as correct additionally
+
+correctDistractor <- function(qid, distractor) {
 	mylist <- which(answers[[eval(qid)]]  == distractor)
 	users <<- users[order(as.numeric(users[["id"]])),]
 	lapply(mylist, incrementUserScore)
@@ -50,6 +54,23 @@ correct2 <- function(qid, distractor) {
 	correctedQuestions <<- c(correctedQuestions, qid)
 }
 
+changeSolution <- function(qid, distractor) {
+	correctDistractor(qid, distractor)
+	oldSolutionRow <- which(questions$id == qid)
+
+	oldSolution <- questions[oldSolutionRow, "solution"]
+	
+	mylist <- which(answers[[eval(qid)]]  == oldSolution)
+	users <<- users[order(as.numeric(users[["id"]])),]
+	lapply(mylist, decrementUserScore)
+	users <<- users[order(users["id"]),]
+	correctedQuestions <<- c(correctedQuestions, qid)
+}
+
 incrementUserScore <- function(id) {
-	 users[id,"score"] <<- users[id,"score"] +1
+	 users[id,"score"] <<- users[id,"score"] + 1
+}
+
+decrementUserScore <- function(id) {
+	 users[id,"score"] <<- users[id,"score"] - 1
 }
