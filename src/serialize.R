@@ -25,7 +25,7 @@ serialize <- function () {
 	file.rename(csvpath, paste(backupPath, csvfile, sep=""))
 	
 # 	generate list of grades
-	write.csv2(users[, c("Matrikel", "mark")], file=paste(exam[["outputPath"]], "List of Grades", ".csv", sep=""),row.names=FALSE)
+	write.csv2(users[, c("Matrikel", "mark", "score")], file=paste(exam[["outputPath"]], "List of Grades", ".csv", sep=""),row.names=FALSE)
 
 # 	generate grading schema
 	write.csv2(marks[, c("grades", "score")], file=paste(exam[["outputPath"]], "Grading Schema.csv", sep=""), row.names=FALSE)
