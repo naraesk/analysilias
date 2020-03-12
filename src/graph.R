@@ -21,6 +21,7 @@ generateGraphs <- function () {
 	generateDistributonOfDifficulty()
 	generateDistributionOfGrades()
 	generateDistractorGraph()
+	generateBoxPlot()
 	
 	message("Graphs have been drawn successfully.")
 	setwd(exam[["outputPath"]])
@@ -99,6 +100,9 @@ calculateDistractorShare <- function (x) {
 		if(x["solution"] != i) {
 			text <- texts[4 * (as.numeric(x["x"]) - 1) + 1]
 			share <- sum(answers[id] == i)/(nrow(answers)-sum(answers[id] == x["solution"]))
+			if(is.na(share)) {
+                            share <- 0
+			}
 			if ((share > 0.8) | (share < 0.1)) {
 				cat <- i + 5
 			} else {
@@ -168,4 +172,17 @@ generateDistractorGraph <- function () {
 					}
 			</script>")
 	graph$save(paste(exam[["outputPath"]], "Distractor analysis.html", sep=""), standalone = TRUE)
+}
+
+generateBoxPlot <- function() {
+        graph <- nPlot(Trennschärfe ~ Schwierigkeitsindex, group="diff_tobe", data=questions, type="scatterChart")
+	graph$chart(tooltipContent = "#! function(key, x, y, e) {return e.point.title} !#")
+	graph$chart(forceY = c(-1, 1))
+	graph$chart(color = c("green", "blue", "red", "yellow"))
+	graph$chart(forceX = c(0, 1))
+	graph$yAxis(axisLabel = "Item-total correlation")
+	graph$xAxis(axisLabel = "Measured difficulty")
+	graph$xAxis(tickValues = c(0, 0.25, 0.5, 0.75, 1))
+	graph$yAxis(tickValues = c(-1, 0, 0.33, 0.67, 1))
+	graph$save(paste(exam[["outputPath"]], "Estimation_Difficulty.html", sep=""), standalone = TRUE)
 }
