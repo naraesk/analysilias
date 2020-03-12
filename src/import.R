@@ -44,8 +44,8 @@ importFromIlias <- function () {
 
 	id   		<- as.numeric(xpathSApply(resultsDoc, "//tst_active/row[@tries=1 or @lastindex>0]", xmlGetAttr, "active_id"))
 	name 		<- xpathSApply(resultsDoc, "//tst_active/row[@tries=1 or @lastindex>0]", xmlGetAttr, "fullname")
-	score     	<- as.numeric(xpathSApply(resultsDoc, "//tst_pass_result/row[@workingtime > 0]", xmlGetAttr, "points"))
-	duration_raw	<- as.numeric(xpathSApply(resultsDoc, "//tst_pass_result/row[@workingtime > 0]", xmlGetAttr, "workingtime"))
+	score     	<- as.numeric(xpathSApply(resultsDoc, "//tst_pass_result/row[@workingtime >= 0]", xmlGetAttr, "points"))
+	duration_raw	<- as.numeric(xpathSApply(resultsDoc, "//tst_pass_result/row[@workingtime >= 0]", xmlGetAttr, "workingtime"))
 
 	duration	<- sapply(duration_raw, secondsToHours)
 	tmp		<- data.frame(id, name)
