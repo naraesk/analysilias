@@ -18,17 +18,20 @@ You need [R](http://www.r-project.org/) and the following R-libs:
 * string
 * R.utils
 * XML
-* rCharts
+* [rCharts](https://github.com/ramnathv/rCharts)
 * digest
 * plyr
 
+rCharts must be installed according to the installation instructions in the GitHub repository.
+The other libraries should be available as packages and can be installed directly.
+
 ### How do I use it? ###
 
-* In ILIAS, go the export tab of your test and download the CSV as well as the XML file and place them into the input/ folder.
+* In ILIAS, go the export tab of your test and download the CSV as well as the XML file and place them into the `input` directory
 * have a look at the main.R, it shows the usage of the different functions
 * run the main.R file
-* the input files are backup into the backup folder
-* all diagrams and other output is placed inside the output folder
+* the input files are backed up into the `output` directory
+* all diagrams and other output is placed inside the `output` directory
 
 ### Suggestions? ###
 
