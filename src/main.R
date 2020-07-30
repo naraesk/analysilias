@@ -15,20 +15,29 @@
 # You should have received a copy of the GNU General Public License
 # along with ilias-analysis.  If not, see <http://www.gnu.org/licenses/>.
 
-setwd("/home/naraesk/Alma Mater/Lehre/E-Assessment/ilias-analysis")
 grades 	   <- c(1.0,  1.3,  1.7,  2.0,  2.3,  2.7,  3.0,  3.3,  3.7,  4.0)
 percentage <- c(0.95, 0.9, 0.85, 0.8, 0.75, 0.7, 0.65, 0.6, 0.55, 0.5)
 source("src/ilias.R")
 
-# Variant 1: Import Data from ILIAS export file and related pool
-# Just download the export file of your exam from ILIAS and place the zip file into the input folder
+# Import downloaded csv and zip file from ILIAS
 import()
 
-#correct("167495")
+# Sometimes a question of an exam contains an error
 
-# Variant 2:: Import of an already converted exam
-# loads the appropriate RData object from the data subdir
-# import("SP WS 1213")
+# The question with the Ilias ID 279477 is considered correct for all participants, regardless of their answer.
+# correctQuestion("279477")
+
+# Use this, if there are multiple correct answers to a question
+# The question with the Ilias ID 279479 io considered correct for all participants who have chosen option 2 or the original correct answer
+# The index is 0 based, so valid values are 0, 1,2, and 3!
+# The order corresponds to the order of possible answers in the Ilias question pool 
+# correctDistractor("279479", 1)
+
+# Use this to set a new correct answer. 
+# For answer 3 you now get points, for all other answers not!
+# The index is 0 based, so valid values are 0, 1,2, and 3!
+# The order corresponds to the order of possible answers in the Ilias question pool 
+# changeSolution("279480", 3)
 
 # calculate some metrics (ITC, difficulty of item, distractor analysis)
 analyze()
@@ -37,9 +46,10 @@ analyze()
 # if you pass "22%" as an option, the "22% rule" of uni leipzig will be applied.
 
 calcGrades("22%")
+#calcGrades()
 
 # create some diagrams into output folder
-# Scatter plot (x: difficulty, y: ITC)
+# Scatter plot
 # Histogram of distribution of difficulty
 # Diagram for distractor analysis
 
@@ -51,15 +61,5 @@ generateGraphs()
 # – create wsv file with grading schema
 
 serialize()
-
-# The pool contains all questions of your ILIAS pool
-# addToPool adds the analysis results to this pool to enable an overall analysis
-# removeFromPool does the opposite, e.g. when added analysis was incorrect
-
-# addToPool()
-# removeFromPool()
-
-# TODO: serialise Pool
-# save(pool, file="data/Pool EVA.RData")
 
 cleanup()
