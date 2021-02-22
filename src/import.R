@@ -42,8 +42,12 @@ importFromIlias <- function () {
 
 # Reads user info from the results file
 
-	id   		<- as.numeric(xpathSApply(resultsDoc, "//tst_active/row[@tries=1 or @lastindex>0]", xmlGetAttr, "active_id"))
-	name 		<- xpathSApply(resultsDoc, "//tst_active/row[@tries=1 or @lastindex>0]", xmlGetAttr, "fullname")
+# We use the attributes tries and lastindex to filter only users that actually participated in the test
+# tries == 1 means, the user has completed the test
+# tries == 0 and lastindex == 27 means, the user stopped at question 27 but has not finished the test
+# tries == 0 and listindex == 0 means, the user did not participate. This might happen, if a user opens the wrong test and therefore enters the wrong test password
+	id   		<- as.numeric(xpathSApply(resultsDoc, "//tst_active/row[@tries>0 or @lastindex>0]", xmlGetAttr, "active_id"))
+	name 		<- xpathSApply(resultsDoc, "//tst_active/row[@tries>0 or @lastindex>0]", xmlGetAttr, "fullname")
 	score     	<- as.numeric(xpathSApply(resultsDoc, "//tst_pass_result/row[@workingtime >= 0]", xmlGetAttr, "points"))
 	duration_raw	<- as.numeric(xpathSApply(resultsDoc, "//tst_pass_result/row[@workingtime >= 0]", xmlGetAttr, "workingtime"))
 
@@ -65,6 +69,7 @@ importFromIlias <- function () {
 	colnames(csv)[1:11]	<- c("name", "mail", "Matrikel", "Pruefungsnummer", "score", c(6:10), "duration")
 	csvdata			<- data.frame(csv["name"], csv["Matrikel"], csv["Pruefungsnummer"], csv["score"], csv["duration"])
 	csvdata 		<- csvdata[order (csvdata[["name"]], csvdata[["duration"]], csvdata[["score"]]),]
+
 	
 	users				<<- data.frame(tmp[["name"]], c(NA), c(NA), tmp[["score"]], mark, tmp["duration"], tmp["id"])
 	colnames(users)[1:4]		<<- c("name", "Matrikel", "Pruefungsnummer", "score")
